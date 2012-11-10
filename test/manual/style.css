@@ -1,0 +1,137 @@
+html, body {
+    font    : 100% sans-serif;
+    padding : 0;
+    margin  : 0;
+}
+
+body {
+    font-size  : 62.5%; /* 10px */
+    line-height: 150%;
+    background : #333333;
+    color      : #EFEFEF;
+}
+
+pre {
+    float    : left;
+    width    : 130px;
+    height   : 440px;
+    margin   : 0 0 0 30px;
+    padding: : 0;
+
+    font-size: 1.6em;
+
+    overflow : auto;
+}
+
+h1 {
+    font-size : 1.4em;
+}
+
+header {
+    border-top    : 1px solid #333333;
+    border-bottom : 1px solid #EFEFEF;
+}
+
+#page {
+    width  : 760px;
+    margin : 0 auto;
+}
+
+#output {
+    display: table;
+    width  : 100%;
+    margin : 1em 0;
+}
+
+#output > * {
+    display: table-row;
+}
+
+#output > * > * {
+    display: table-cell;
+}
+
+#output h2:nth-of-type(2) {
+    padding-left : 30px;
+    text-align   : center;
+}
+
+#graphic {
+    background: #DEDEDE;
+    width : 440px;
+}
+
+.progress {
+    width         : 756px;
+    margin        : 1em 0 0 0;
+    border        : 2px solid #EFEFEF;
+    border-radius : 15px;
+    overflow      : hidden;
+}
+
+.metter {
+    height     : 15px;
+    width      : 0;
+    background : #EFEFEF;
+}
+
+.control {
+    text-align : center;
+}
+
+.control button {
+    display    : table-cell;
+    width      : 30px;
+    height     : 30px;
+
+    background : #333 url(img/controls.png);
+
+    border     : 1px solid #EFEFEF;
+    border-left: none;
+    border-top : none;
+
+    cursor     : pointer;
+}
+
+.control label {
+    display : inline-block;
+    padding : 0 10px 5px;
+
+    vertical-align : bottom;
+}
+
+.control input {
+    text-align: right;
+    border: 1px solid #EFEFEF;
+    background: #333333;
+    color:#EFEFEF;
+    border-radius : 3px;
+}
+
+.control button:first-child {
+    border-left   : 1px solid #EFEFEF;
+    border-radius : 0 0 0 10px;
+}
+
+.control button:last-of-type {
+    border-radius : 0 0 10px 0;
+}
+
+.control button.active,
+.control button:active,
+.control button:hover {
+    background-color : #EFEFEF;
+}
+
+#bt1 { background-position :  -90px 0; }
+#bt2 { background-position : -150px 0; }
+#bt3 { background-position :  -30px 0; }
+#bt4 { background-position :    0px 0; }
+#bt5 { background-position : -120px 0; }
+#bt6 { background-position :  -61px 0; }
+#bt1.active, #bt1:active, #bt1:hover { background-position :  -90px -30px; }
+#bt2.active, #bt2:active, #bt2:hover { background-position : -150px -30px; }
+#bt3.active, #bt3:active, #bt3:hover { background-position :  -30px -30px; }
+#bt4.active, #bt4:active, #bt4:hover { background-position :    0px -30px; }
+#bt5.active, #bt5:active, #bt5:hover { background-position : -120px -30px; }
+#bt6.active, #bt6:active, #bt6:hover { background-position :  -61px -30px; }

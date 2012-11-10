@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Testing the Timer object</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="page">
+        <header>
+            <h1>Test page for the TimerJS library</h1>
+        </header>
+
+        <section>
+            <div class="progress">
+                <div class="metter"></div>
+            </div>
+
+            <div class="control">
+                <div>
+                    <button type="button" id="bt1" title="Fast Backward"></button>
+                    <button type="button" id="bt2" title="Backward"></button>
+                    <button type="button" id="bt3" title="Pause"></button>
+                    <button type="button" id="bt4" title="Forward"></button>
+                    <button type="button" id="bt5" title="Fast Forward"></button>
+                    <button type="button" id="bt6" title="stop" class="active"></button>
+                    <label for="duration">
+                        Duration: <input id="duration" value="5000" size="6"> ms
+                    </label>
+                    <label for="delay">
+                        Delay: <input id="delay" value="0" size="4"> ms
+                    </label>
+                </div>
+            </div>
+
+            
+            <div id="output">
+                <div>
+                    <h2>Time function: 
+                        <select id="function">
+                            <option>linear</option>
+                            <option>easeInQuad</option>
+                            <option>easeOutQuad</option>
+                            <option>easeInOutQuad</option>
+                            <option>easeInCubic</option>
+                            <option>easeOutCubic</option>
+                            <option>easeInOutCubic</option>
+                            <option>easeInQuart</option>
+                            <option>easeOutQuart</option>
+                            <option>easeInOutQuart</option>
+                            <option>easeInQuint</option>
+                            <option>easeOutQuint</option>
+                            <option>easeInOutQuint</option>
+                            <option>easeInSine</option>
+                            <option>easeOutSine</option>
+                            <option>easeInOutSine</option>
+                            <option>easeInExpo</option>
+                            <option>easeOutExpo</option>
+                            <option>easeInOutExpo</option>
+                            <option>easeInCirc</option>
+                            <option>easeOutCirc</option>
+                            <option>easeInOutCirc</option>
+                            <option>easeInElastic</option>
+                            <option>easeOutElastic</option>
+                            <option>easeInOutElastic</option>
+                            <option>easeInBack</option>
+                            <option>easeOutBack</option>
+                            <option>easeInOutBack</option>
+                            <option>easeInBounce</option>
+                            <option>easeOutBounce</option>
+                            <option>easeInOutBounce</option>
+                        </select>
+                    </h2>
+                    <h2>
+                        Value / Time
+                        <input type="button" id="clear" value="clear">
+                    </h2>
+                </div>
+                <div>
+                    <div id="graphic">
+                        <canvas id="drawing" width="440" height="440"></canvas>
+                    </div>
+                    <div id="text">
+                       <pre id="value" >0</pre>
+                       <pre id="time"  >0</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/requestAnimationFrame.js"></script>
+    <script src="../timer.js"                ></script>
+    <script src="js/main.js"                 ></script>
+</body>
+</html>
