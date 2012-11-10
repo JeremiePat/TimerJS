@@ -38,31 +38,31 @@ API Documentation
 
 ``Timer(duration, delay, easing)``
 
-When you instentiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply.
+When you instantiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply.
 
 See below to know more about each of this parameters
 
 ```javascript
-// This will instentiate a 0ms timer
+// This will instantiate a 0ms timer
 var timer = new Timer();
 
-// This will instentiate a 5000ms timer
+// This will instantiate a 5000ms timer
 var timer = new Timer(5000);
 
-// This will instentiate a 5000ms timer with a 1000ms delay
+// This will instantiate a 5000ms timer with a 1000ms delay
 var timer = new Timer(5000, 1000);
 
-// This will instentiate a 5000ms timer with the easeInQuad build-in easing function
+// This will instantiate a 5000ms timer with the easeInQuad build-in easing function
 var timer = new Timer(5000, 0, 'easeInQuad');
 
-// This will instentiate a 5000ms timer with a custom easing function
+// This will instantiate a 5000ms timer with a custom easing function
 var timer = new Timer(5000, 0, function (t) { return t*t; });
 
 ```
 
-### Timer.play
+### Timer.play()
 
-``Timer.play(speedFactor)``
+``Timer.play(*speedFactor*)``
 
 The play fonction launch the timer or change its speed. 
 
@@ -79,7 +79,7 @@ timer.play(-1); // The timer is playing backward
 timer.play(2);  // The timer is playing twice its normal speed
 ```
 
-### Timer.stop
+### Timer.stop()
 
 ``Timer.stop()``
 
@@ -88,6 +88,8 @@ The stop function reinitialize the timer to it's starting position.
 ### Timer.position
 
 The ``position`` property is a readonly object with two properties: ``value``and ``time``. The two values give the current position of the time and value in the range 0-1 since the timer has started to play. A time value of 0 means that the time is at the begining of the time line. A time value of 1 means that the time is at the end of the time line. The progression of the ``time`` value is always linear where the progression of the ``value`` value depend on the easing function used by the timer (linear by default).
+
+*This property is a readonly property.*
 
 ```javascript
 var timer = new Timer(5000);
@@ -104,7 +106,7 @@ setTimeout(function () {
 
 The ``is`` property is a readonly object with two boolean properties: ``playing`` and ``paused``. The first one say if the timer is playing and the second if it is paused.
 
-This property is a readonly property.
+*This property is a readonly property.*
 
 ```javascript
 var play, pause,
@@ -133,7 +135,7 @@ pause = timer.is.paused  // false
 
 The ``speed`` property give you the speed factor of the timer.
 
-This property is a readonly property.
+*This property is a readonly property.*
 
 ```javascript
 var speed,
@@ -156,7 +158,7 @@ speed = timer.speed // -1
 
 ### Timer.easing
 
-The ``easing`` property is the easing function used by the timer to compute the value of the ``position`` property. If the timer is playing, this property is a readonly property. Otherwise, you can change the easing function as you wish.
+The ``easing`` property is the easing function used by the timer to compute the value of the ``position`` property. If the timer is playing, This property is a readonly property. Otherwise, you can change the easing function as you wish.
 
 To change the easing function you have two possibilities.
 
@@ -208,7 +210,7 @@ timer.easing = function (t) {
 
 The ``startTime`` property give you the timestamp of the begining of the animation. If the animation hasn't started yet, this property return ``null``;
 
-This property is a readonly property.
+*This property is a readonly property.*
 
 ```javascript
 var startTime,
@@ -287,8 +289,8 @@ This timer is far from finished the plan is to add the following features:
 
 * Enable loop
 * Autorized "out of range" time (currently constrain to the a 0-1 range)
-* Improve reverse animation
-* Add the ability to remember the last state of an animation when stoped.
+* Improve reversed animation
+* Add the ability to remember the last state of an animation when stopped.
 * Add the ability to get a value against an arbitrary time, even if the timer is not playing.
 * Allow change of any paramaters while the timer is playing
 * Allow to synchronize several timers
