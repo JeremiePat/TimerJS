@@ -76,11 +76,7 @@
         },
 
         func : {
-            // t : current time: 0 < t < 1 sur l'axe du temps lineaire
-            // b : start value : 0 sur l'axe de la valeur
-            // c : end value   : 1 sur l'axe de la valeur
-            // d : duration    : 1 sur l'axe du temps
-            
+            // t : current time: 0 < t < 1 on the time axis
             linear: function linear(t) {
                 return t;
             },
@@ -88,86 +84,109 @@
             easeInQuad: function easeInQuad(t) {
                 return t*t;
             },
+
             easeOutQuad: function easeOutQuad(t) {
                 return -1*t*(t-2);
             },
+
             easeInOutQuad: function easeInOutQuad(t) {
                 if ((t/=1/2) < 1) { return 1/2*t*t; }
                 return -1/2 * ((--t)*(t-2) - 1);
             },
+
             easeInCubic: function easeInCubic(t) {
                 return t*t*t;
             },
+
             easeOutCubic: function easeOutCubic(t) {
                 return (t-=1)*t*t + 1;
             },
+
             easeInOutCubic: function easeInOutCubic(t) {
                 if ((t/=1/2) < 1) { return 1/2*t*t*t; }
                 return 1/2*((t-=2)*t*t + 2);
             },
+
             easeInQuart: function easeInQuart(t) {
                 return t*t*t*t;
             },
+
             easeOutQuart: function easeOutQuart(t) {
                 return -1 * ((t-=1)*t*t*t - 1);
             },
+
             easeInOutQuart: function easeInOutQuart(t) {
                 if ((t/=1/2) < 1) { return 1/2*t*t*t*t; }
                 return -1/2 * ((t-=2)*t*t*t - 2);
             },
+
             easeInQuint: function easeInQuint(t) {
                 return t*t*t*t*t;
             },
+
             easeOutQuint: function easeOutQuint(t) {
                 return (t-=1)*t*t*t*t + 1;
             },
+
             easeInOutQuint: function easeInOutQuint(t) {
                 if ((t/=1/2) < 1) { return 1/2*t*t*t*t*t; }
                 return 1/2*((t-=2)*t*t*t*t + 2);
             },
+
             easeInSine: function easeInSine(t) {
                 return -1 * Math.cos(t * (Math.PI/2)) + 1;
             },
+
             easeOutSine: function easeOutSine(t) {
                 return Math.sin(t*Math.PI/2);
             },
+
             easeInOutSine: function easeInOutSine(t) {
                 return -1/2 * (Math.cos(t*Math.PI) - 1);
             },
+
             easeInExpo: function easeInExpo(t) {
                 return (t===0) ? 0 : Math.pow(2, 10 * (t - 1));
             },
+
             easeOutExpo: function easeOutExpo(t) {
                 return (t===1) ? 1 : 1 - Math.pow(2, -10 * t);
             },
+
             easeInOutExpo: function easeInOutExpo(t) {
                 if (t===0) { return 0; }
                 if (t===1) { return 1; }
                 if ((t/=1/2) < 1) { return 1/2 * Math.pow(2, 10 * (t - 1)); }
                 return 1/2 * (2 - Math.pow(2, -10 * --t));
             },
+
             easeInCirc: function easeInCirc(t) {
                 return -1 * (Math.sqrt(1 - t*t) - 1);
             },
+
             easeOutCirc: function easeOutCirc(t) {
                 return Math.sqrt(1 - (t-=1)*t);
             },
+
             easeInOutCirc: function easeInOutCirc(t) {
                 if ((t/=1/2) < 1) { return -1/2 * (Math.sqrt(1 - t*t) - 1); }
                 return 1/2 * (Math.sqrt(1 - (t-=2)*t) + 1);
             },
+
             easeInElastic: function easeInElastic(t) {
                 var p=0.3, s=p/(2*Math.PI) * Math.asin(1);
                 if (t===0) { return 0; }
                 if (t===1) { return 1; }
                 return -(Math.pow(2,10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p ));
             },
+
             easeOutElastic: function easeOutElastic(t) {
                 var p=0.3, s=p/(2*Math.PI) * Math.asin(1);
                 if (t===0) { return 0; }
                 if (t===1) { return 1; }
                 return Math.pow(2,-10*t) * Math.sin( (t-s)*(2*Math.PI)/p ) + 1;
             },
+
             easeInOutElastic: function easeInOutElastic(t) {
                 var p=1.5*0.3, s=p/(2*Math.PI) * Math.asin(1);
                 if (t===0) {return 0;}
@@ -175,22 +194,27 @@
                 if (t < 1) {return -0.5*(Math.pow(2,10*(t-=1)) * Math.sin((t-s)*(2*Math.PI)/p));}
                 return Math.pow(2,-10*(t-=1)) * Math.sin( (t-s)*(2*Math.PI)/p )*0.5 + 1;
             },
+
             easeInBack: function easeInBack(t) {
                 var s=1.70158;
                 return t*t*((s+1)*t - s);
             },
+
             easeOutBack: function easeOutBack(t) {
                 var s=1.70158;
                 return (t-=1)*t*((s+1)*t + s) + 1;
             },
+
             easeInOutBack: function easeInOutBack(t) {
                 var s=1.70158;
                 if ((t/=1/2) < 1) { return 1/2*(t*t*(((s*=(1.525))+1)*t - s)); }
                 return 1/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2);
             },
+
             easeInBounce: function easeInBounce(t) {
                 return 1 - Easing.prototype.func.easeOutBounce (1-t);
             },
+
             easeOutBounce: function easeOutBounce(t) {
                 var a=2.625, b=0.984375;
                 if (t < (1/2.75)) { a=0; b=0; } 
@@ -198,6 +222,7 @@
                 else if (t < (2.5/2.75)) { a=2.25; b=0.9375; }
                 return 7.5625*(t-=(a/2.75))*t + b;
             },
+
             easeInOutBounce: function easeInOutBounce(t, b, c, d) {
                 if (t < 1/2) { return Easing.prototype.func.easeInBounce (t*2) * 0.5; }
                 return Easing.prototype.func.easeOutBounce (t*2-1) * 0.5 + 0.5;
@@ -247,7 +272,7 @@
             pauseTime : {
                 value : null,
                 set   : function (isNull) {
-                    closed.pauseTime.value = toNullTime(isNull);
+                    this.value = toNullTime(isNull);
                 }
             },
 
@@ -255,7 +280,7 @@
             backTime : {
                 value : null,
                 set   : function (isNull) {
-                    closed.backTime.value = toNullTime(isNull);
+                    this.value = toNullTime(isNull);
                 }
             },
 
@@ -306,11 +331,11 @@
                     var sf = closed.speedFactor.value;
                     sf *= sf < 0 ? -1 : 1;
 
-                    closed.end.value = closed.startTime.value
-                                     + closed.userDelay.value
-                                     + closed.delay.value
-                                     + (sf === 0 ? closed.duration.value 
-                                                 : closed.duration.value / sf);
+                    this.value = closed.startTime.value
+                               + closed.userDelay.value
+                               + closed.delay.value
+                               + (sf === 0 ? closed.duration.value 
+                                           : closed.duration.value / sf);
                 }
             }
         };
