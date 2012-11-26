@@ -473,7 +473,7 @@
             throw "Timer.position is a readonly property";
         },
         get : function () {
-            var begin, end, now, backTime, ease, speedFactor,
+            var begin, end, now, ease, speedFactor,
                 startTime   = this.get("startTime"),
                 output      = {
                     value : 0,
@@ -489,15 +489,14 @@
                 now = this.get("pauseTime");
             }
             else if (speedFactor < 0) { 
-                backTime = this.get("backTime");
-                now = backTime*2 - now; 
+                now = this.get("backTime") * 2 - now; 
             } 
 
             begin = this.get("begin");
             end   = this.get("end");
 
             if (now <= begin) { return output; }
-            if (now >= end)   { return {value: 1, time: 1 }; }
+            if (now > end)   { this.stop(); return output; }
 
             ease = this.get("easing");
 
@@ -515,7 +514,7 @@
     // ------------------------- //
     // METHOD
     // ------------------------- //
-    Timer.prototype.play = function (speedFactor) {
+    Timer.prototype.play = function play(speedFactor) {
         var shift, factor,
             userTime     = this.get("userTime"),
             delay        = this.get("delay"),
@@ -540,7 +539,7 @@
             this.set("backTime",  null);
         }
 
-        speedFactor  = this.set("speedFactor", speedFactor);
+        speedFactor = this.set("speedFactor", speedFactor);
 
         if (speedFactor === 0) { this.set("pauseTime", now); }
         if (speedFactor   < 0) { this.set("backTime",  now); }
@@ -554,11 +553,16 @@
         this.set("delay", delay + shift - factor);
     };
 
-    Timer.prototype.stop = function() {
+    Timer.prototype.stop = function stop() {
         this.set("userTime",    null);
         this.set("delay",       0);
         this.set("speedFactor", 1);
     };
+
+    // Timer.prototype.freeze = function freeze(timestamp) {
+    //     this.play(0);
+    //     this.set('pauseTime', timestamp);
+    // };
 
     window.Timer = Timer;
 })(this);
