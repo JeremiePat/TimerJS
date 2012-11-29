@@ -41,11 +41,13 @@ var timer = new Timer(config); // Constructor
 timer.play(speed); // Start playing the timer or change speed
 timer.stop();      // Stop the timer
 
-// Properties
+// Properties (configuration)
 timer.duration; // Get/Set the duration while the timer will play
 timer.delay;    // Get/Set the delay before the timer start playing
 timer.speed;    // Get the speed factor of the timer
 timer.easing    // Get/Set the easing function that will be used by the timer
+
+// Properties (state of the timer)
 timer.position.value // Get the computed value over time based on easing
 timer.position.time  // Get the computed time in a 0-1 range
 timer.is.playing // Get the playing state of the timer
@@ -59,7 +61,7 @@ API Documentation
 
 ### Constructor
 
-``Timer(config)``
+``new Timer(config)``
 
 When you instantiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply. All configuration parameters are optional, but remember that the default value for the duration is 0 millisecond which can be useless in many cases. 
 
@@ -96,7 +98,7 @@ var timer = new Timer({
 
 ### Timer.play()
 
-``Timer.play(*speedFactor*)``
+``Timer.play(speedFactor)``
 
 The play fonction launch the timer or change its speed. 
 
