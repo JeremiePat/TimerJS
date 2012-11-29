@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012
+    Copyright (c) 2012 Jérémie Patonnier
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
@@ -223,7 +223,7 @@
                 return 7.5625*(t-=(a/2.75))*t + b;
             },
 
-            easeInOutBounce: function easeInOutBounce(t, b, c, d) {
+            easeInOutBounce: function easeInOutBounce(t) {
                 if (t < 1/2) { return Easing.prototype.func.easeInBounce (t*2) * 0.5; }
                 return Easing.prototype.func.easeOutBounce (t*2-1) * 0.5 + 0.5;
             }
