@@ -69,7 +69,7 @@
 
         getTime  : function (begin, end, now) {
             if (begin === end) {
-                throw 'A zero time animation as no meaning!';
+                throw new Error('A zero time animation as no meaning!');
             }
 
             return (now - begin) / (end - begin);
