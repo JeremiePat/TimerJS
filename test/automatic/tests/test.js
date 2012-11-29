@@ -1,6 +1,27 @@
 describe('API basic testing', function () {
     var timer;
 
+    describe('Timer instantiation', function () {
+        it('if new Timer({duration:1000}), timer.duration === 1000', function () {
+            var timer = new Timer({duration:1000});
+
+            expect(timer.duration).toBe(1000);
+        });
+
+        it('if new Timer({delay:1000}), timer.delay === 1000', function () {
+            var timer = new Timer({delay:1000});
+
+            expect(timer.delay).toBe(1000);
+        });
+
+        it('if new Timer({easing:function foo(){}}), timer.easing === foo', function () {
+            var foo   = function () {},
+                timer = new Timer({easing:foo});
+
+            expect(timer.easing).toBe(foo);
+        });
+    })
+
     describe('Timer instance default state', function() {
         beforeEach(function() {
             timer = new Timer()
@@ -145,7 +166,7 @@ describe('API basic testing', function () {
 
     describe('While the timer is playing', function () {
         beforeEach(function() {
-            timer = new Timer(1000);
+            timer = new Timer({duration:1000});
             timer.play();
         });
 
@@ -172,7 +193,7 @@ describe('API basic testing', function () {
     
     describe('While the timer is paused', function () {
         beforeEach(function() {
-            timer = new Timer(1000);
+            timer = new Timer({duration:1000});
             timer.play(0);
         });
 
@@ -197,7 +218,6 @@ describe('API basic testing', function () {
         });
     });
 
-
     describe('Testing Timer.play()', function () {
         var timer,
             dur = 1000;
@@ -206,7 +226,7 @@ describe('API basic testing', function () {
             var now = +new Date();
             mDate.mock();
             mDate.setTime(now);
-            timer = new Timer(dur);
+            timer = new Timer({duration:dur});
         });
 
         afterEach(function() {
@@ -259,7 +279,7 @@ describe('API basic testing', function () {
 
     describe('Testing Timer.stop()', function () {
         beforeEach(function() {
-            timer = new Timer(1000);
+            timer = new Timer({duration:1000});
         });
 
         it('when Timer.stop(), Timer.startTime === null', function () {

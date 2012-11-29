@@ -234,7 +234,7 @@
     // CORE               //
     // ------------------ //
 
-    function Timer(dur, delay, easing) {
+    function Timer(config) {
         // Sefely keep the internal properties of the object
         var closed = {
             // Specific data for users
@@ -363,9 +363,9 @@
         });
 
         // Truly initialize the object
-        this.set("duration",  dur);
-        this.set("userDelay", delay);
-        this.set("easing",    easing);
+        this.set("duration", config && config.duration);
+        this.set("userDelay",config && config.delay   );
+        this.set("easing",   config && config.easing  );
     }
 
     // ------------------------- //

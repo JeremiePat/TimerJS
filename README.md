@@ -31,14 +31,37 @@ Timer.play();
 myAnimation();
 ```
 
+API Overview
+------------
+
+```javascript
+var timer = new Timer(config); // Constructor
+
+// Methods
+timer.play(speed); // Start playing the timer or change speed
+timer.stop();      // Stop the timer
+
+// Properties
+timer.duration; // Get/Set the duration while the timer will play
+timer.delay;    // Get/Set the delay before the timer start playing
+timer.speed;    // Get the speed factor of the timer
+timer.easing    // Get/Set the easing function that will be used by the timer
+timer.position.value // Get the computed value over time based on easing
+timer.position.time  // Get the computed time in a 0-1 range
+timer.is.playing // Get the playing state of the timer
+timer.is.paused  // Get the paused state of the timer
+timer.startTime  // Get the timestamp when the timer started to play
+```
+
+
 API Documentation
 -----------------
 
 ### Constructor
 
-``Timer(duration, delay, easing)``
+``Timer(config)``
 
-When you instantiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply.
+When you instantiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply. All configuration parameters are optional, but remember that the default value for the duration is 0 millisecond which can be useless in many cases. 
 
 See below to know more about each of this parameters
 
@@ -47,16 +70,27 @@ See below to know more about each of this parameters
 var timer = new Timer();
 
 // This will instantiate a 5000ms timer
-var timer = new Timer(5000);
+var timer = new Timer({
+  duration: 5000
+});
 
 // This will instantiate a 5000ms timer with a 1000ms delay
-var timer = new Timer(5000, 1000);
+var timer = new Timer({
+  duration: 5000,
+  delay   : 1000
+});
 
 // This will instantiate a 5000ms timer with the easeInQuad build-in easing function
-var timer = new Timer(5000, 0, 'easeInQuad');
+var timer = new Timer({
+  duration: 5000,
+  easing  : 'easeInQuad'
+});
 
 // This will instantiate a 5000ms timer with a custom easing function
-var timer = new Timer(5000, 0, function (t) { return t*t; });
+var timer = new Timer({
+  duration: 5000, 
+  easing  : function (t) { return t*t; }
+});
 
 ```
 
@@ -292,5 +326,7 @@ This timer is far from finished the plan is to add the following features:
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
 * Add the ability to get a value against an arbitrary time, even if the timer is not playing.
-* Allow change of any paramaters while the timer is playing
+* Allow change of any parameters while the timer is playing
 * Allow to synchronize several timers
+* Make easing function more readable and easier to maintain
+* Add support for Cubic-Bezier definition of easing function

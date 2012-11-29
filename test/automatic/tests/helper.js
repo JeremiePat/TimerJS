@@ -16,7 +16,7 @@ function buildStepTest(dur, index, step, definition) {
 
     mDate.mock();
     mDate.setTime(n);
-    timer = new Timer(d);
+    timer = new Timer({duration:d});
 
     for(k in r) {
       if (k > i) { break; }

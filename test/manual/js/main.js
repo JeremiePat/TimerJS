@@ -293,8 +293,11 @@
     // INIT             //
     // ---------------- //
 
-    t = new Timer(UI.param.duration.value, UI.param.delay.value);
-    t.easing = UI.param.easing.value;
+    t = new Timer({
+        duration: UI.param.duration.value, 
+        delay   : UI.param.delay.value,
+        easing  : UI.param.easing.value
+    });
 
     UI.canvas.init(t.easing);
     UI.canvas.draw(0,0);
