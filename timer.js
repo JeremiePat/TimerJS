@@ -59,7 +59,7 @@
     Easing.prototype = {
         getValue : function (begin, end, now) {
             if (begin === end) {
-                throw 'A zero time animation as no meaning!';
+                throw new Error('A zero time animation as no meaning!');
             }
 
             var time = (now - begin) / (end - begin);
@@ -374,7 +374,7 @@
     // Timer.startTime
     Object.defineProperty(Timer.prototype, "startTime", {
         set : function () {
-            throw "Timer.startTime is a readonly property";
+            throw new Error("Timer.startTime is a readonly property");
         },
         get : function () {
             return this.get("userTime");
@@ -387,7 +387,7 @@
     Object.defineProperty(Timer.prototype, "delay", {
         set : function (value) {
             if(this.is.playing){
-                throw "Timer.delay can not be set while it's playing";
+                throw new Error("Timer.delay can not be set while it's playing");
             }
 
             this.set("userDelay", value);
@@ -402,7 +402,7 @@
     // Timer.speed
     Object.defineProperty(Timer.prototype, "speed", {
         set : function () {
-            throw "Timer.speed is a read only property";
+            throw new Error("Timer.speed is a read only property");
         },
         get : function () {
             return this.get("speedFactor");
@@ -415,7 +415,7 @@
     Object.defineProperty(Timer.prototype, "duration", {
         set : function (value) {
             if(this.is.playing) {
-                throw "Timer.duration can not be set while it's playing";
+                throw new Error("Timer.duration can not be set while it's playing");
             }
 
             this.set("duration", value);
@@ -431,7 +431,7 @@
     Object.defineProperty(Timer.prototype, "easing", {
         set : function (value) {
             if(this.is.playing) {
-                throw "Timer.easing can not be set while it's playing";
+                throw new Error("Timer.easing can not be set while it's playing");
             }
             
             this.set("easing", value);
@@ -448,7 +448,7 @@
     //         .paused
     Object.defineProperty(Timer.prototype, "is", {
         set : function () {
-            throw "Timer.is is a readonly property";
+            throw new Error("Timer.is is a readonly property");
         },
         get : function () {
             var startTime   = this.get("startTime"),
@@ -470,7 +470,7 @@
     //Timer.position
     Object.defineProperty(Timer.prototype, "position", {
         set : function () {
-            throw "Timer.position is a readonly property";
+            throw new Error("Timer.position is a readonly property");
         },
         get : function () {
             var begin, end, now, ease, speedFactor,
