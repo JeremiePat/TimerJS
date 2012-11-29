@@ -31,11 +31,11 @@
     }
 
     function isFunction(value) {
-        return Object.prototype.toString.call(value) === '[object Function]';
+        return typeof value === "function";
     }
 
     function isNaN(value) {
-        return isNumber(value) && value !== +value;
+        return isNumber(value) && window.isNaN(value);
     }
 
     function toInt(value, alt) {
