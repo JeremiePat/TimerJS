@@ -39,7 +39,7 @@
     }
 
     function toInt(value, alt) {
-        return isNaN(+value) ? alt : +value; 
+        return isNaN(+value) ? alt : +value;
     }
 
     function toPosInt(value) {
@@ -334,7 +334,7 @@
                     this.value = closed.startTime.value
                                + closed.userDelay.value
                                + closed.delay.value
-                               + (sf === 0 ? closed.duration.value 
+                               + (sf === 0 ? closed.duration.value
                                            : closed.duration.value / sf);
                 }
             }
@@ -488,9 +488,9 @@
             if (speedFactor === 0) {
                 now = this.get("pauseTime");
             }
-            else if (speedFactor < 0) { 
-                now = this.get("backTime") * 2 - now; 
-            } 
+            else if (speedFactor < 0) {
+                now = this.get("backTime") * 2 - now;
+            }
 
             begin = this.get("begin");
             end   = this.get("end");
