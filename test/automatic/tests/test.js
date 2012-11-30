@@ -1,4 +1,8 @@
+/*global jasmine:true describe:true it:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
+
 describe('API basic testing', function () {
+    "use strict";
+
     var timer;
 
     describe('Timer instantiation', function () {
@@ -20,11 +24,11 @@ describe('API basic testing', function () {
 
             expect(timer.easing).toBe(foo);
         });
-    })
+    });
 
     describe('Timer instance default state', function() {
         beforeEach(function() {
-            timer = new Timer()
+            timer = new Timer();
         });
 
         it('Timer.play() exists', function () {
@@ -300,8 +304,9 @@ describe('API basic testing', function () {
 });
 
 describe('Testing variation in a 2s linear animation', function () {
-    var timer, d,
-        now  = +new Date(),
+    "use strict";
+
+    var d,
         dur  = 2000,
         step = 200,
         definition = [
@@ -351,6 +356,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 params : [{speed:1},0,0,0,{speed:2}]
             },
             {
+                title  : 'A forward animation with a change of direction after 1.8s and again with double speed after 3.2s',
+                results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.4,0.6,0.8,1,0],
+                params : [{speed:1},0,0,0,0,0,0,0,0,{speed:-1},0,0,0,0,0,0,{speed:2}]
+            },
+            {
                 title  : 'A forward animation with a 400ms pause after 1s',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.5,0.5,0.6,0.7,0.8,0.9,1,0],
                 params : [{speed:1},0,0,0,0,{speed:0},0,{speed:1}]
@@ -363,8 +373,9 @@ describe('Testing variation in a 2s linear animation', function () {
 });
 
 describe('Testing easing function on a 2s animation', function () {
-    var timer, d,
-        now  = +new Date(),
+    "use strict";
+
+    var d,
         dur  = 2000,
         step = 200,
         definition = [

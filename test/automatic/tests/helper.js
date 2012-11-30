@@ -1,4 +1,8 @@
+/*global describe:true it:false expect:true beforeEach:true mDate:true Timer:true */
+
 function buildStepTest(dur, index, step, definition) {
+  "use strict";
+
   var i = index,
       s = step,
       t = definition.time ? definition.time : definition.results,
@@ -12,11 +16,12 @@ function buildStepTest(dur, index, step, definition) {
         r = definition.results,
         t = definition.time ? definition.time : definition.results,
         p = definition.params,
-        n = +new Date();;
+        n = +new Date();
 
     mDate.mock();
     mDate.setTime(n);
     timer = new Timer({duration:d});
+    //timer.play();
 
     for(k in r) {
       if (k > i) { break; }
@@ -26,6 +31,7 @@ function buildStepTest(dur, index, step, definition) {
       if(p[k] && p[k].easing) { timer.easing = p[k].easing; }
       if(p[k] && typeof p[k].delay === 'number') { timer.delay = p[k].delay; }
       if(p[k] && typeof p[k].speed === 'number') { timer.play(p[k].speed); }
+      //if(p[k] && typeof p[k].speed === 'number') { timer.speed = p[k].speed; }
     }
 
     mDate.setTime(n + i*s);
@@ -38,6 +44,8 @@ function buildStepTest(dur, index, step, definition) {
 }
 
 function buildAnimationTest(dur, step, definition) {
+  "use strict";
+
   var u = dur,
       s = step,
       d = definition;
@@ -52,6 +60,8 @@ function buildAnimationTest(dur, step, definition) {
 }
 
 (function () {
+  "use strict";
+
   var time, sDate = window.Date;
 
   function mDate() {}
@@ -81,6 +91,8 @@ function buildAnimationTest(dur, step, definition) {
 })();
 
 String.prototype.pad = function (padStr, length) {
+    "use strict";
+
     var string = this,
         padStr = padStr || ' ',
         length = length || 0;
@@ -94,10 +106,12 @@ String.prototype.pad = function (padStr, length) {
     }
 
     return string;
-}
+};
 
 
 beforeEach(function() {
+  "use strict";
+
   this.addMatchers({
     toHaveAReadOnlyPropertyNamed: function(property) {
       try {
