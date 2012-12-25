@@ -1,4 +1,4 @@
-/*global jasmine:true describe:true it:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
+/*global jasmine:true describe:true it:true xit:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
 
 describe('API basic testing', function () {
     "use strict";
@@ -61,10 +61,6 @@ describe('API basic testing', function () {
 
         it('Timer.speed exists', function () {
             expect(timer.speed).not.toBeUndefined();
-        });
-
-        it('Timer.speed is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('speed');
         });
 
         it('Timer.speed default value is 1,', function () {
@@ -189,16 +185,13 @@ describe('API basic testing', function () {
         it('Timer.duration   is read-only', function () {
             expect(timer).toHaveAReadOnlyPropertyNamed('duration');
         });
-
-        it('Timer.easing     is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('easing');
-        });
     });
     
     describe('While the timer is paused', function () {
         beforeEach(function() {
             timer = new Timer({duration:1000});
-            timer.play(0);
+            timer.play();
+            timer.speed = 0;
         });
 
         it('Timer.is.playing is true', function () {
@@ -247,27 +240,27 @@ describe('API basic testing', function () {
             expect(timer.speed).toBe(1);
         });
 
-        it('when Timer.play(0),  Timer.speed === 0', function () {
+        xit('when Timer.play(0),  Timer.speed === 0', function () {
             timer.play(0);
             expect(timer.speed).toBe(0);
         });
 
-        it('when Timer.play(1),  Timer.speed === 1', function () {
+        xit('when Timer.play(1),  Timer.speed === 1', function () {
             timer.play(1);
             expect(timer.speed).toBe(1);
         });
 
-        it('when Timer.play(2),  Timer.speed === 2', function () {
+        xit('when Timer.play(2),  Timer.speed === 2', function () {
             timer.play(2);
             expect(timer.speed).toBe(2);
         });
 
-        it('when Timer.play(-1), Timer.speed === -1', function () {
+        xit('when Timer.play(-1), Timer.speed === -1', function () {
             timer.play(-1);
             expect(timer.speed).toBe(-1);
         });
 
-        it('when changing direction, Timer.position === Timer.position', function () {
+        xit('when changing direction, Timer.position === Timer.position', function () {
             var before, after;
             timer.play();
 
@@ -291,14 +284,6 @@ describe('API basic testing', function () {
             timer.stop();
 
             expect(timer.startTime).toBeNull();
-        });
-
-        it('when Timer.stop(), Timer.speed === 1', function () {
-            timer.play(2);
-            expect(timer.speed).toBe(2);
-
-            timer.stop();
-            expect(timer.speed).toBe(1);
         });
     });
 });

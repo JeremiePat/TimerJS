@@ -38,13 +38,14 @@ API Overview
 var timer = new Timer(config); // Constructor
 
 // Methods
-timer.play(speed); // Start playing the timer or change speed
-timer.stop();      // Stop the timer
+timer.play();  // Start playing the timer or change speed
+timer.pause(); // Pause the timer (short cut to ``timer.speed = 0;``)
+timer.stop();  // Stop the timer
 
 // Properties (configuration)
 timer.duration; // Get/Set the duration while the timer will play
 timer.delay;    // Get/Set the delay before the timer start playing
-timer.speed;    // Get the speed factor of the timer
+timer.speed;    // Get/Set the speed factor of the timer
 timer.easing    // Get/Set the easing function that will be used by the timer
 
 // Properties (state of the timer)
@@ -63,13 +64,16 @@ API Documentation
 
 ``new Timer(config)``
 
-When you instantiate an new Timer, you can immediatly set its duration, its delay and the easing function to apply. All configuration parameters are optional, but remember that the default value for the duration is 0 millisecond which can be useless in many cases. 
+When you instantiate an new Timer, you can immediatly set its duration, its delay, its speed and the easing function to apply. All configuration parameters are optional, but remember that the default value for the duration is 0 millisecond which is useless in many cases. 
 
 See below to know more about each of this parameters
 
 ```javascript
 // This will instantiate a 0ms timer
 var timer = new Timer();
+
+// This will instantiate a 5000ms timer
+var timer = new Timer(5000);
 
 // This will instantiate a 5000ms timer
 var timer = new Timer({
@@ -94,38 +98,50 @@ var timer = new Timer({
   easing  : function (t) { return t*t; }
 });
 
+// This will instantiate a 5000ms timer that will play backward
+var timer = new Timer({
+  duration: 5000, 
+  delay   : -5000,
+  speed   : -1
+});
+
 ```
 
-### Timer.play()
 
-``Timer.play(speedFactor)``
+### Methods
 
-The play fonction launch the timer or change its speed. 
+#### Timer.play()
 
-The speedFactor argument determine de speed at which the timer is walk along the time line. If the speedFactor argument is homited, it's like the value ``1`` was used.
+``Timer.play()``
 
-The speedFactor can be negative. In that case, the timer is playing backward.
+The play function launch the timer. 
 
 ```javascript
 var timer = new Timer(5000);
 
-timer.play();   // The timer start playing at its normal speed
-timer.play(0);  // The timer is paused
-timer.play(-1); // The timer is playing backward
-timer.play(2);  // The timer is playing twice its normal speed
+timer.play();   // The timer start playing
 ```
 
-### Timer.stop()
+#### Timer.pause()
+
+``Timer.pause()``
+
+The pause function pause the timer. It means it's still playing but its position doesn't change as long as it remains paused.
+
+#### Timer.stop()
 
 ``Timer.stop()``
 
 The stop function reinitialize the timer to it's starting position.
 
-### Timer.position
+
+### Properties (configuration)
+
+All those properties are read-only
+
+#### Timer.position
 
 The ``position`` property is a readonly object with two properties: ``value``and ``time``. The two values give the current position of the time and value in the range 0-1 since the timer has started to play. A time value of 0 means that the time is at the begining of the time line. A time value of 1 means that the time is at the end of the time line. The progression of the ``time`` value is always linear where the progression of the ``value`` value depend on the easing function used by the timer (linear by default).
-
-*This property is a readonly property.*
 
 ```javascript
 var timer = new Timer(5000);
@@ -138,7 +154,7 @@ setTimeout(function () {
 }, 2500);
 ```
 
-### Timer.is
+#### Timer.is
 
 The ``is`` property is a readonly object with two boolean properties: ``playing`` and ``paused``. The first one say if the timer is playing and the second if it is paused.
 
@@ -156,7 +172,7 @@ timer.play();
 play  = timer.is.playing // true
 pause = timer.is.paused  // false
 
-timer.play(0);
+timer.pause(); // or timer.speed = 0;
 
 play  = timer.is.playing // true
 pause = timer.is.paused  // true
@@ -167,11 +183,91 @@ play  = timer.is.playing // false
 pause = timer.is.paused  // false
 ```
 
-### Timer.speed
+#### Timer.startTime
 
-The ``speed`` property give you the speed factor of the timer.
+The ``startTime`` property give you the timestamp of the begining of the animation. If the animation hasn't started yet, this property return ``null``;
 
-*This property is a readonly property.*
+
+```javascript
+var startTime,
+    timer = new Timer(5000);
+
+startTime = timer.startTime // null
+
+timer.play();
+
+startTime = timer.startTime // A timestamp
+
+timer.stop();
+
+startTime = timer.startTime // null
+
+```
+
+
+### Properties (state of the timer)
+
+#### Timer.duration
+
+The ``duration`` property allow you to retrieve the timer duration. If the timer is playing, this property is a readonly property. If the timer is not playing, you can change the value of this property.
+
+```javascript
+var duration,
+    timer = new Timer(5000);
+
+duration = timer.duration; // 5000
+
+timer.duration = 1000; // The timer is now set with a 1000ms duration
+
+timer.play();
+
+duration = timer.duration; // 1000
+
+timer.duration = 2000; // Throw an error
+```
+
+#### Timer.delay
+
+The ``delay`` property allow you to retrieve the timer delay. If the timer is playing, this property is a readonly property. If the timer is not playing, you can change the value of this property.
+
+```javascript
+var delay,
+    timer = new Timer(5000);
+
+delay = timer.delay; // 0
+
+timer.delay = 1000; // The timer is now set with a 1000ms delay
+
+timer.play();
+
+delay = timer.delay; // 1000
+
+timer.delay = 2000; // Throw an error
+```
+
+A delay can be negative. A positive delay means that the timer will wait for the delay value before changing its time and value position. A negative delay means that when the timer will start it will be as if it was playing since the delay value.
+
+```javascript
+var value, time,
+    timer = new Timer(5000, -2500);
+
+value = timer.position.value; // 0
+time  = timer.position.time ; // 0
+
+timer.play();
+
+value = timer.position.value; // 0.5
+time  = timer.position.time ; // 0.5
+```
+
+#### Timer.speed
+
+The ``speed`` property allows you to get and set the speed factor of the timer.
+
+It determines the speed at which the timer is walking along the time line. The default value is ``1``.
+
+The speed can be negative. In that case, the timer is playing backward.
+
 
 ```javascript
 var speed,
@@ -179,20 +275,12 @@ var speed,
 
 speed = timer.speed // 1
 
-timer.play();
-speed = timer.speed // 1
-
-timer.play(0);
-speed = timer.speed // 0
-
-timer.play(2);
-speed = timer.speed // 2
-
-timer.play(-1);
-speed = timer.speed // -1
+timer.speed = 0;  // The timer is paused (it's the same as timer.pause())
+timer.speed = -1; // The timer is playing backward
+timer.speed = 2;  // The timer is playing twice its normal speed
 ```
 
-### Timer.easing
+#### Timer.easing
 
 The ``easing`` property is the easing function used by the timer to compute the value of the ``position`` property. If the timer is playing, This property is a readonly property. Otherwise, you can change the easing function as you wish.
 
@@ -240,81 +328,6 @@ timer.easing = "easeInQuad";
 timer.easing = function (t) { 
     return t*t; 
 };
-```
-
-### Timer.startTime
-
-The ``startTime`` property give you the timestamp of the begining of the animation. If the animation hasn't started yet, this property return ``null``;
-
-*This property is a readonly property.*
-
-```javascript
-var startTime,
-    timer = new Timer(5000);
-
-startTime = timer.startTime // null
-
-timer.play();
-
-startTime = timer.startTime // A timestamp
-
-timer.stop();
-
-startTime = timer.startTime // null
-
-```
-
-### Timer.duration
-
-The ``duration`` property allow you to retrieve the timer duration. If the timer is playing, this property is a readonly property. If the timer is not playing, you can change the value of this property.
-
-```javascript
-var duration,
-    timer = new Timer(5000);
-
-duration = timer.duration; // 5000
-
-timer.duration = 1000; // The timer is now set with a 1000ms duration
-
-timer.play();
-
-duration = timer.duration; // 1000
-
-timer.duration = 2000; // Throw an error
-```
-
-### Timer.delay
-
-The ``delay`` property allow you to retrieve the timer delay. If the timer is playing, this property is a readonly property. If the timer is not playing, you can change the value of this property.
-
-```javascript
-var delay,
-    timer = new Timer(5000);
-
-delay = timer.delay; // 0
-
-timer.delay = 1000; // The timer is now set with a 1000ms delay
-
-timer.play();
-
-delay = timer.delay; // 1000
-
-timer.delay = 2000; // Throw an error
-```
-
-A delay can be negative. A positive delay means that the timer will wait for the delay value before changing its time and value position. A negative delay means that when the timer will start it will be as if it was playing since the delay value.
-
-```javascript
-var value, time,
-    timer = new Timer(5000, -2500);
-
-value = timer.position.value; // 0
-time  = timer.position.time ; // 0
-
-timer.play();
-
-value = timer.position.value; // 0.5
-time  = timer.position.time ; // 0.5
 ```
 
 

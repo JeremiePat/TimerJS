@@ -48,7 +48,7 @@
 
     function toNullTime(isNull) {
         if (isNull === null)  { return null; }
-        if (isNumber(isNull)) { return isNull; }
+        if (isNumber(isNull) && isNull > 0) { return isNull; }
         return +new Date();
     }
 
@@ -272,7 +272,7 @@
                 value : null,
                 set   : function (isNull) {
                     this.value = toNullTime(isNull);
-                    closed.startTime.set(isNull);
+                    closed.startTime.set(this.value);
                 }
             },
 
@@ -284,8 +284,16 @@
                     
                     // When the value is set (mening, the Timer start)
                     // The pause and back times MUST be reinitialized
-                    closed.pauseTime.value = null;
-                    closed.backTime.value = null;
+                    if(this.value !== null && closed.pauseTime.value !== null) {
+                        closed.pauseTime.value = this.value;
+                    }
+                    
+                    if(this.value !== null && closed.backTime.value !== null) {
+                        closed.backTime.value = this.value;
+                    }
+                    
+                    closed.delay.value = 0;
+
                     closed.begin.set();
                     closed.end.set();
                 }
@@ -295,7 +303,15 @@
             pauseTime : {
                 value : null,
                 set   : function (isNull) {
-                    this.value = toNullTime(isNull);
+                    var now    = +new Date(),
+                        newVal = toNullTime(isNull),
+                        oldVal = this.value;
+
+                    if(oldVal !== null && newVal === null) {
+                        closed.delay.set(closed.delay.value + (now - oldVal));
+                    }
+
+                    this.value = newVal;
                 }
             },
 
@@ -303,7 +319,15 @@
             backTime : {
                 value : null,
                 set   : function (isNull) {
-                    this.value = toNullTime(isNull);
+                    var now    = +new Date(),
+                        newVal = toNullTime(isNull),
+                        oldVal = this.value;
+
+                    if(oldVal !== null && newVal === null) {
+                        closed.delay.set(closed.delay.value + (now - oldVal)*2);
+                    }
+
+                    this.value = newVal;
                 }
             },
 
@@ -334,8 +358,26 @@
             speedFactor : {
                 value : 1,
                 set : function (value) {
-                    this.value = toInt(value, 1);
+                    var now    = +new Date(),
+                        newVal = toInt(value, 1),
+                        oldVal = this.value;
+
+                    closed.pauseTime.set(null);
+                    closed.backTime.set(null);
+
+                    if (newVal === 0) { closed.pauseTime.set(now); }
+                    if (newVal   < 0) { closed.backTime.set(now); }
+
+                    closed.prevSpeed.set(oldVal);
+                    this.value = newVal;
                     closed.end.set();
+                }
+            },
+
+            prevSpeed : {
+                value : 1,
+                set : function (value) {
+                    this.value = toInt(value, 1);
                 }
             },
 
@@ -386,9 +428,10 @@
         });
 
         // Truly initialize the object
-        this.set("duration", config && config.duration);
-        this.set("userDelay",config && config.delay   );
-        this.set("easing",   config && config.easing  );
+        this.set("duration",  (isNumber(config) && config) || (config && config.duration));
+        this.set("userDelay",  config && config.delay );
+        this.set("easing",     config && config.easing);
+        this.set("speedFactor",config && config.speed );
     }
 
     // ------------------------- //
@@ -424,8 +467,26 @@
 
     // Timer.speed
     Object.defineProperty(Timer.prototype, "speed", {
-        set : function () {
-            throw new Error("Timer.speed is a read only property");
+        set : function (speedFactor) {
+            var shift, factor,
+                speed = this.get("speedFactor"),
+                now   = +new Date(),
+                delay = this.get("delay"),
+                time  = this.position.time;
+
+            speedFactor = this.set('speedFactor', speedFactor);
+
+            speedFactor *= speedFactor < 0 ? -1 : 1;
+            speed       *= speed       < 0 ? -1 : 1;
+            
+            // The following handle the shift when the speed ratio change
+            if (speed !== speedFactor) {
+                shift  = now - this.get("userTime") - delay - this.get("userDelay");
+                factor = speedFactor === 0 ? this.get("duration")*time
+                                           : this.get("duration")*time/speedFactor;
+                    
+                this.set("delay", delay + shift - factor);
+            }
         },
         get : function () {
             return this.get("speedFactor");
@@ -437,10 +498,6 @@
     // Timer.duration
     Object.defineProperty(Timer.prototype, "duration", {
         set : function (value) {
-            if(this.is.playing) {
-                throw new Error("Timer.duration can not be set while it's playing");
-            }
-
             this.set("duration", value);
         },
         get : function () {
@@ -453,10 +510,6 @@
     // Timer.easing
     Object.defineProperty(Timer.prototype, "easing", {
         set : function (value) {
-            if(this.is.playing) {
-                throw new Error("Timer.easing can not be set while it's playing");
-            }
-            
             this.set("easing", value);
         },
         get : function () {
@@ -537,55 +590,24 @@
     // ------------------------- //
     // METHOD
     // ------------------------- //
-    Timer.prototype.play = function play(speedFactor) {
-        var shift, factor,
-            userTime     = this.get("userTime"),
-            delay        = this.get("delay"),
-            pauseTime    = this.get("pauseTime"),
-            backTime     = this.get("backTime"),
-            change       = this.get("userDelay"),
-            time         = this.position.time,
-            now          = +new Date();
-
-        if (userTime === null) {
-            userTime = this.set("userTime", now);
-            change   = 0;
-        }
-
-        if (pauseTime !== null) {
-            delay = this.set("delay", delay + (now - pauseTime));
-            this.set("pauseTime",  null);
-        }
-
-        if (backTime !== null) {
-            delay = this.set("delay", delay + (now - backTime)*2);
-            this.set("backTime",  null);
-        }
-
-        speedFactor = this.set("speedFactor", speedFactor);
-
-        if (speedFactor === 0) { this.set("pauseTime", now); }
-        if (speedFactor   < 0) { this.set("backTime",  now); }
-
-        speedFactor *= speedFactor < 0 ? -1 : 1;
+    Timer.prototype.play = function play() {
+        if(this.get("userTime") === null) {
+            this.set("userTime");
         
-        shift  = now - userTime - delay - change;
-        factor = speedFactor === 0 ? this.get("duration")*time
-                                   : this.get("duration")*time/speedFactor;
-            
-        this.set("delay", delay + shift - factor);
+        } else if (this.get("speedFactor") === 0) {
+            // FIXEME: To test
+            this.set("speedFactor", this.get("prevSpeed"));
+        }
+    };
+
+    Timer.prototype.pause = function pause() {
+        this.speed = 0;
     };
 
     Timer.prototype.stop = function stop() {
         this.set("userTime",    null);
         this.set("delay",       0);
-        this.set("speedFactor", 1);
     };
-
-    // Timer.prototype.freeze = function freeze(timestamp) {
-    //     this.play(0);
-    //     this.set('pauseTime', timestamp);
-    // };
 
     window.Timer = Timer;
 })(this);

@@ -1,3 +1,5 @@
+    /*global Timer:true console:true requestAnimationFrame:true */
+
     // ---------------- //
     // ENV VARIABLES    //
     // ---------------- //
@@ -37,6 +39,8 @@
             margin  : 40,
 
             init    : function (easing) {
+                "use strict";
+
                 var w = this.paper.width,
                     h = this.paper.height,
                     ctx = this.hidden.getContext('2d');
@@ -49,13 +53,17 @@
             },
 
             draw     : function (time, value) {
+                "use strict";
+
                 this.context.clearRect(0,0,this.paper.width,this.paper.height);
                 this.context.drawImage(this.hidden, 0, 0);
 
-                this.point(time, value); 
+                this.point(time, value);
             },
 
             background : function (ctx) {
+                "use strict";
+
                 var m   = this.margin,
                     w   = this.paper.width,
                     h   = this.paper.height;
@@ -92,6 +100,8 @@
             },
 
             curve : function (ctx, easing) {
+                "use strict";
+
                 var x, y,
                     m = this.margin,
                     w = this.paper.width,
@@ -113,6 +123,8 @@
 
             // value and time are numbers between 0 and 1
             point : function (time, value) {
+                "use strict";
+
                 var m   = this.margin,
                     w   = this.paper.width,
                     h   = this.paper.height,
@@ -127,6 +139,8 @@
         },
 
         setActiveButton : function (button) {
+            "use strict";
+
             var bt;
 
             for(bt in this.btn) {
@@ -135,10 +149,12 @@
 
             button.className = 'active';
         }
-    }
+    };
 
     // Main animation Loop
     function theLoop() {
+        "use strict";
+
         // Display progression value
         UI.value.innerHTML = t.position.value + "\n" + UI.value.innerHTML;
         UI.time.innerHTML  = t.position.time  + "\n" + UI.time.innerHTML;
@@ -163,80 +179,97 @@
 
     var Action = {
         updateEasing : function (value) {
-            t.stop();
+            "use strict";
+
             t.easing = value;
         },
 
         updateDuration : function (value) {
-            t.stop();
+            "use strict";
+
             t.duration = value;
         },
 
         updateDelay : function (value) {
+            "use strict";
+
             t.stop();
             t.delay = value;
         },
 
         forward : function () {
-            var isPlaying = t.is.playing;
+            "use strict";
 
-            t.play(10);
+            t.speed = 10;
             
-            if(!isPlaying) theLoop();
+            if(!t.is.playing) {
+                t.play();
+                theLoop();
+            }
         },
 
         backward : function () {
-            var isPlaying = t.is.playing;
+            "use strict";
 
-            t.play(-10);
+            t.speed = -10;
             
-            if(!isPlaying) theLoop();
+            if(!t.is.playing) {
+                t.play();
+                theLoop();
+            }
         },
 
         pause : function () {
-            t.play(0);
+            "use strict";
+
+            t.pause();
         },
 
         play : function () {
+            "use strict";
+
             var isPlaying = t.is.playing;
             
-            t.play(1);
+            t.speed = 1;
+            t.play();
             
-            setTimeout(function () { if(!isPlaying) theLoop(); }, 200);
+            if(!isPlaying) { theLoop(); }
         },
 
         playback : function () {
-            var isPlaying = t.is.playing;
+            "use strict";
 
-            t.play(-1);
+            t.speed = -1;
             
-            if(!isPlaying) theLoop();
+            if(!t.is.playing) {
+                t.play();
+                theLoop();
+            }
         },
 
         stop : function () {
+            "use strict";
+
             t.stop();
             theLoop();
         }
-    }
+    };
 
 
     // ---------------- //
     // CONTROLER        //
     // ---------------- //
     document.addEventListener("change", function (evt) {
-        
+        "use strict";
+
         if (evt.target === UI.param.easing) {
             Action.updateEasing(evt.target.value);
-            UI.setActiveButton(UI.btn.stop);
-            UI.metter.style.width = "0";
             UI.canvas.init(t.easing);
             UI.canvas.draw(0,0);
         }
 
         else if (evt.target === UI.param.duration) {
             Action.updateDuration(evt.target.value);
-            UI.setActiveButton(UI.btn.stop);
-            UI.metter.style.width = "0";
             UI.canvas.draw(0,0);
         }
 
@@ -247,10 +280,11 @@
             UI.canvas.draw(0,0);
         }
     
-    }, false)
+    }, false);
 
     document.addEventListener("click", function (evt) {
-        
+        "use strict";
+
         if (evt.target === UI.param.clear) {
             UI.value.innerHTML = "";
             UI.time.innerHTML  = "";
@@ -294,7 +328,7 @@
     // ---------------- //
 
     t = new Timer({
-        duration: UI.param.duration.value, 
+        duration: UI.param.duration.value,
         delay   : UI.param.delay.value,
         easing  : UI.param.easing.value
     });
@@ -304,6 +338,6 @@
 
     console.log("Timer");
 
-    for (i in t) {
-        console.log("Timer." + i )
+    for (var i in t) {
+        console.log("Timer." + i );
     }
