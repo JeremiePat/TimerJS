@@ -512,7 +512,7 @@
             if (this.is.playing) {
                 throw new Error('Duration is a read-only property');
             }
-            
+
             this.set("duration", value);
         },
         get : function () {
@@ -610,7 +610,6 @@
             this.set("userTime");
         
         } else if (this.get("speed") === 0) {
-            // FIXEME: To test
             this.set("speed", this.get("prevSpeed"));
         }
     };

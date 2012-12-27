@@ -190,10 +190,6 @@ describe('API basic testing', function () {
             expect(timer.is.paused).toBe(false);
         });
 
-        xit('Timer.delay      is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('delay');
-        });
-
         it('Timer.duration   is read-only', function () {
             expect(timer).toHaveAReadOnlyPropertyNamed('duration');
         });
@@ -212,10 +208,6 @@ describe('API basic testing', function () {
 
         it('Timer.is.paused  is true', function () {
             expect(timer.is.paused).toBe(true);
-        });
-
-        xit('Timer.delay      is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('delay');
         });
 
         it('Timer.duration   is read-only', function () {
@@ -246,6 +238,43 @@ describe('API basic testing', function () {
         it('when Timer.play(), Timer.speed === 1', function () {
             timer.play();
             expect(timer.speed).toBe(1);
+        });
+    });
+
+    describe('Testing Timer.pause()', function () {
+        var timer,
+            now = +new Date(),
+            dur = 1000;
+
+        beforeEach(function () {
+            mDate.mock();
+            mDate.setTime(now);
+            timer = new Timer(dur);
+            timer.play();
+        });
+
+        afterEach(function () {
+            mDate.unmock();
+        });
+
+        it('when Timer.pause(), Timer.speed === 0', function () {
+            timer.pause();
+
+            expect(timer.speed).toBe(0);
+        });
+
+        it('when Timer.play() after Timer.pause(), Timer.speed === speed before pause', function () {
+            mDate.setTime(now + 200);
+            timer.speed = 2;
+            expect(timer.speed).toBe(2);
+
+            mDate.setTime(now + 400);
+            timer.pause();
+            expect(timer.speed).toBe(0);
+
+            mDate.setTime(now + 600);
+            timer.play();
+            expect(timer.speed).toBe(2);
         });
     });
 
