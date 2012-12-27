@@ -214,16 +214,12 @@ describe('API basic testing', function () {
             expect(timer.is.paused).toBe(true);
         });
 
-        it('Timer.delay      is read-only', function () {
+        xit('Timer.delay      is read-only', function () {
             expect(timer).toHaveAReadOnlyPropertyNamed('delay');
         });
 
         it('Timer.duration   is read-only', function () {
             expect(timer).toHaveAReadOnlyPropertyNamed('duration');
-        });
-
-        it('Timer.easing     is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('easing');
         });
     });
 

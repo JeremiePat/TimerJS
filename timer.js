@@ -509,6 +509,10 @@
     // Timer.duration
     Object.defineProperty(Timer.prototype, "duration", {
         set : function (value) {
+            if (this.is.playing) {
+                throw new Error('Duration is a read-only property');
+            }
+            
             this.set("duration", value);
         },
         get : function () {

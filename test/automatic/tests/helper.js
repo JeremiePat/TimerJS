@@ -115,8 +115,8 @@ beforeEach(function() {
   this.addMatchers({
     toHaveAReadOnlyPropertyNamed: function(property) {
       try {
-        this.actual[property] = null;
-        return this.actual[property] !== null;
+        this.actual[property] = 0;
+        return this.actual[property] !== 0;
 
       } catch (e) {
         return true;
