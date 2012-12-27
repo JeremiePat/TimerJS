@@ -20,7 +20,7 @@ function buildStepTest(dur, index, step, definition) {
 
     mDate.mock();
     mDate.setTime(n);
-    timer = new Timer({duration:d});
+    timer = new Timer(d);
 
     for(k in r) {
       if (k > i) { break; }
@@ -92,9 +92,10 @@ function buildAnimationTest(dur, step, definition) {
 String.prototype.pad = function (padStr, length) {
     "use strict";
 
-    var string = this,
-        padStr = padStr || ' ',
-        length = length || 0;
+    var string = this;
+
+    padStr = padStr || ' ';
+    length = length || 0;
 
     while (string.length < length) {
         string = padStr + string;

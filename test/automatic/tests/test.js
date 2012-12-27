@@ -1,4 +1,4 @@
-/*global jasmine:true describe:true it:true xit:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
+/*global jasmine:true describe:true it:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
 
 describe('API basic testing', function () {
     "use strict";
@@ -6,6 +6,12 @@ describe('API basic testing', function () {
     var timer;
 
     describe('Timer instantiation', function () {
+        it('if new Timer(1000), timer.duration === 1000', function () {
+            var timer = new Timer(1000);
+
+            expect(timer.duration).toBe(1000);
+        });
+
         it('if new Timer({duration:1000}), timer.duration === 1000', function () {
             var timer = new Timer({duration:1000});
 
@@ -16,6 +22,12 @@ describe('API basic testing', function () {
             var timer = new Timer({delay:1000});
 
             expect(timer.delay).toBe(1000);
+        });
+
+        it('if new Timer({speed:2}), timer.speed === 2', function () {
+            var timer = new Timer({speed:2});
+
+            expect(timer.speed).toBe(2);
         });
 
         it('if new Timer({easing:function foo(){}}), timer.easing === foo', function () {
@@ -223,54 +235,21 @@ describe('API basic testing', function () {
             var now = +new Date();
             mDate.mock();
             mDate.setTime(now);
-            timer = new Timer({duration:dur});
+            timer = new Timer(dur);
         });
 
         afterEach(function() {
             mDate.unmock();
         });
 
-        it('when Timer.play(),   Timer.startTime > 0', function () {
+        it('when Timer.play(), Timer.startTime > 0', function () {
             timer.play();
             expect(timer.startTime).toBeGreaterThan(0);
         });
 
-        it('when Timer.play(),   Timer.speed === 1', function () {
+        it('when Timer.play(), Timer.speed === 1', function () {
             timer.play();
             expect(timer.speed).toBe(1);
-        });
-
-        xit('when Timer.play(0),  Timer.speed === 0', function () {
-            timer.play(0);
-            expect(timer.speed).toBe(0);
-        });
-
-        xit('when Timer.play(1),  Timer.speed === 1', function () {
-            timer.play(1);
-            expect(timer.speed).toBe(1);
-        });
-
-        xit('when Timer.play(2),  Timer.speed === 2', function () {
-            timer.play(2);
-            expect(timer.speed).toBe(2);
-        });
-
-        xit('when Timer.play(-1), Timer.speed === -1', function () {
-            timer.play(-1);
-            expect(timer.speed).toBe(-1);
-        });
-
-        xit('when changing direction, Timer.position === Timer.position', function () {
-            var before, after;
-            timer.play();
-
-            mDate.setTime(+new Date() + dur/2);
-
-            before = timer.position;
-            timer.play(-1);
-            after = timer.position;
-
-            expect(before).toEqual(after);
         });
     });
 

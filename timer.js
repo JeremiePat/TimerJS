@@ -530,9 +530,8 @@
         configurable : false
     });
 
-    // Timer.is
-    //         .playing
-    //         .paused
+    // Timer.is.playing
+    // Timer.is.paused
     Object.defineProperty(Timer.prototype, "is", {
         set : function () {
             throw new Error("Timer.is is a readonly property");
@@ -554,7 +553,8 @@
         configurable : false
     });
 
-    //Timer.position
+    // Timer.position.time
+    // Timer.position.value
     Object.defineProperty(Timer.prototype, "position", {
         set : function () {
             throw new Error("Timer.position is a readonly property");
