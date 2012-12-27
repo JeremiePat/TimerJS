@@ -1,4 +1,4 @@
-/*global jasmine:true describe:true it:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
+/*global jasmine:true describe:true it:true xit:true expect:true beforeEach:true afterEach:true mDate:true buildAnimationTest:true Timer:true*/
 
 describe('API basic testing', function () {
     "use strict";
@@ -190,7 +190,7 @@ describe('API basic testing', function () {
             expect(timer.is.paused).toBe(false);
         });
 
-        it('Timer.delay      is read-only', function () {
+        xit('Timer.delay      is read-only', function () {
             expect(timer).toHaveAReadOnlyPropertyNamed('delay');
         });
 
@@ -283,6 +283,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 title  : 'A forward animation with a 600ms delay',
                 results: [0,0,0,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
                 params : [{speed:1, delay:600}]
+            },
+            {
+                title  : 'A forward animation with a 1s delay after 1s',
+                results: [0,0.1,0.2,0.3,0.4,0.5,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
+                params : [{speed:1},0,0,0,0,0,{delay:1000}]
             },
             {
                 title  : 'A forward animation with a -600ms delay',

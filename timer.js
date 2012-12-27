@@ -271,7 +271,14 @@
         },
 
         set userDelay(value) {
-            this.data.userDelay = toInt(value, 0);
+            var newVal = toInt(value, 0),
+                oldVal = this.userDelay;
+
+            if (this.begin) {
+                this.begin = this.begin - oldVal + newVal;
+            }
+
+            this.data.userDelay = newVal;
         },
 
         // Accessor to the start time set by the user
@@ -318,7 +325,6 @@
             var shift,
                 now    = +new Date(),
                 newVal = toInt(value, 1),
-                oldVal = this.value,
                 factor = newVal * (newVal < 0 ? -1 : 1);
 
             this.pauseTime = null;
@@ -327,7 +333,7 @@
             if (newVal === 0) { this.pauseTime = now; }
             if (newVal   < 0) { this.backTime  = now; }
 
-            this.prevSpeed  = oldVal;
+            this.prevSpeed  = this.speed;
             this.data.speed = newVal;
 
             shift = now - this.begin;
@@ -364,8 +370,6 @@
             if(this.startTime !== null && this.backTime !== null) {
                 this.backTime = this.startTime;
             }
-            
-            // this.delay = 0;
 
             this.begin = this.startTime + this.userDelay;
         },
@@ -481,10 +485,6 @@
     // Timer.delay
     Object.defineProperty(Timer.prototype, "delay", {
         set : function (value) {
-            if(this.is.playing){
-                throw new Error("Timer.delay can not be set while it's playing");
-            }
-
             this.set("userDelay", value);
         },
         get : function () {
