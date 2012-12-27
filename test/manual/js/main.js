@@ -193,7 +193,6 @@
         updateDelay : function (value) {
             "use strict";
 
-            t.stop();
             t.delay = value;
         },
 
@@ -275,8 +274,6 @@
 
         else if (evt.target === UI.param.delay) {
             Action.updateDelay(evt.target.value);
-            UI.setActiveButton(UI.btn.stop);
-            UI.metter.style.width = "0";
             UI.canvas.draw(0,0);
         }
     
