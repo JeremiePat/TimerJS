@@ -189,10 +189,6 @@ describe('API basic testing', function () {
         it('Timer.is.paused  is false', function () {
             expect(timer.is.paused).toBe(false);
         });
-
-        it('Timer.duration   is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('duration');
-        });
     });
     
     describe('While the timer is paused', function () {
@@ -208,10 +204,6 @@ describe('API basic testing', function () {
 
         it('Timer.is.paused  is true', function () {
             expect(timer.is.paused).toBe(true);
-        });
-
-        it('Timer.duration   is read-only', function () {
-            expect(timer).toHaveAReadOnlyPropertyNamed('duration');
         });
     });
 
@@ -358,6 +350,16 @@ describe('Testing variation in a 2s linear animation', function () {
                 title  : 'A forward animation with a 400ms pause after 1s',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.5,0.5,0.6,0.7,0.8,0.9,1,0],
                 params : [{speed:1},0,0,0,0,{speed:0},0,{speed:1}]
+            },
+            // { // Need to investigate if it's the right behavior
+            //     title  : 'A 2s forward animation that turn to a 4s animation after 1s',
+            //     results: [0,0.1,0.2,0.3,0.4,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1,0],
+            //     params : [{speed:1},0,0,0,0,{duration:4000}]
+            // },
+            {
+                title  : 'A 2s forward animation that turn to a 1s animation after 1.4s',
+                results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0],
+                params : [{speed:1},0,0,0,0,0,0,{duration:1000}]
             }
         ];
 

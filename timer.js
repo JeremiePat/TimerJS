@@ -256,7 +256,8 @@
     function TimerState() {
         this.data = {
             userTime  : null,
-            startTime : null
+            startTime : null,
+            easing    : new Easing()
         };
     }
 
@@ -297,6 +298,19 @@
         },
         
         set duration(value) {
+            // NEED TO INVESTIGATE IF IT'S THE RIGHT BEHAVIOR
+
+            // var now    = +new Date(),
+            //     shift  = this.easing.getTime(this.begin, this.end, now),
+            //     newVal = toPosInt(value),
+            //     oldVal = this.duration;
+
+            // if (this.begin && this.end - oldVal + newVal > now) {
+            //     this.begin -= Math.round(shift * (newVal - oldVal));
+            // }
+
+            // this.data.duration = newVal;
+
             this.data.duration = toPosInt(value);
         },
 
@@ -509,10 +523,6 @@
     // Timer.duration
     Object.defineProperty(Timer.prototype, "duration", {
         set : function (value) {
-            if (this.is.playing) {
-                throw new Error('Duration is a read-only property');
-            }
-
             this.set("duration", value);
         },
         get : function () {
@@ -619,8 +629,8 @@
     };
 
     Timer.prototype.stop = function stop() {
-        this.set("userTime",    null);
-        this.set("delay",       0);
+        this.set("userTime", null);
+        this.set("delay",    0);
     };
 
     window.Timer = Timer;
