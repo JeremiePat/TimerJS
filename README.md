@@ -41,6 +41,7 @@ var timer = new Timer(config); // Constructor
 timer.play();  // Start playing the timer or change speed
 timer.pause(); // Pause the timer (short cut to ``timer.speed = 0;``)
 timer.stop();  // Stop the timer
+timer.freeze();// Return a position against an arbitrary time
 
 // Properties (configuration)
 timer.duration; // Get/Set the duration while the timer will play
@@ -114,7 +115,7 @@ var timer = new Timer({
 
 ``Timer.play()``
 
-The play function launch the timer. 
+The ``play`` function launch the timer. 
 
 ```javascript
 var timer = new Timer(5000);
@@ -126,13 +127,40 @@ timer.play();   // The timer start playing
 
 ``Timer.pause()``
 
-The pause function pause the timer. It means it's still playing but its position doesn't change as long as it remains paused.
+The ``pause`` function pause the timer. It means it's still playing but its position doesn't change as long as it remains paused.
 
 #### Timer.stop()
 
 ``Timer.stop()``
 
-The stop function reinitialize the timer to it's starting position.
+The ``stop`` function reinitialize the timer to it's starting position.
+
+#### Timer.freeze()
+
+``Timer.freeze(now)``
+``Timer.freeze(start, now)``
+
+The ``freeze`` function return a position (time and value) against an arbitrary time.
+If the player is playing, the ``freeze`` function can be called with a single parameter, otherwise it requires 2 parameters: the starttime of the animation and the time when you want the position.
+
+```javascript
+var timer = new Timer(5000);
+
+var now = +new Date;
+var position = timer.freeze(now, now + 2500)
+
+position.time;  // 0.5
+position.value; // 0.5
+
+
+timer.play();
+
+position = timer.freeze(timer.startTime + 4500);
+
+position.time;  // 0.9
+position.value; // 0.9
+
+```
 
 
 ### Properties (configuration)
@@ -340,8 +368,13 @@ This timer is far from finished the plan is to add the following features:
 * Autorized "out of range" time (currently constrain to the a 0-1 range)
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
-* Add the ability to get a value against an arbitrary time, even if the timer is not playing.
-* Allow change of any parameters while the timer is playing
 * Allow to synchronize several timers
-* Make easing function more readable and easier to maintain
 * Add support for Cubic-Bezier definition of easing function
+
+Done
+----
+
+* Add the ability to get a value against an arbitrary time, even if the timer is not playing.
+* Make easing function more readable and easier to maintain
+* Allow change of any parameters while the timer is playing
+

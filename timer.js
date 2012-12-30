@@ -633,5 +633,27 @@
         this.set("delay",    0);
     };
 
+    Timer.prototype.freeze = function freeze() {
+        // var begin, now, end, time, value;
+
+        if (arguments.length < 2 && this.startTime === null) {
+            throw new Error('The timer must be started with the play() function first');
+        }
+
+        var begin = (arguments.length > 1 ? arguments[0] : this.startTime) + this.delay,
+            now   = arguments[1] || arguments[0] || +new Date(),
+            end   = begin + this.duration,
+            time  = this.get("easing").getTime(begin, end, now),
+            value = this.get("easing").getValue(begin, end, now);
+
+        if (now < begin) { return {time: 0, value: 0}; }
+        if (now > end)   { return {time: 1, value: 1}; }
+
+        if (time < 0) { time = 0; }
+        if (time > 1) { time = 1; }
+
+        return {time: time, value: value};
+    };
+
     window.Timer = Timer;
 })(this);

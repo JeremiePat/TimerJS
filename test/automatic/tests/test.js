@@ -271,8 +271,8 @@ describe('API basic testing', function () {
     });
 
     describe('Testing Timer.stop()', function () {
-        beforeEach(function() {
-            timer = new Timer({duration:1000});
+        beforeEach(function () {
+            timer = new Timer(1000);
         });
 
         it('when Timer.stop(), Timer.startTime === null', function () {
@@ -280,6 +280,111 @@ describe('API basic testing', function () {
             timer.stop();
 
             expect(timer.startTime).toBeNull();
+        });
+    });
+
+    describe('Testing Timer.freeze()', function () {
+        var timer,
+            now = +new Date(),
+            dur = 1000;
+
+        beforeEach(function () {
+            mDate.mock();
+            mDate.setTime(now);
+            timer = new Timer(dur);
+        });
+
+        afterEach(function () {
+            mDate.unmock();
+        });
+
+        it('when Timer.freeze() on a stopped timer, an exception is raised', function () {
+            var ok = false;
+
+            try {
+                timer.freeze();
+            } catch (e) {
+                ok = true;
+            }
+
+            expect(ok).toBe(true);
+        });
+
+        it('when Timer.freeze(whatever) on a stopped timer, an exception is raised', function () {
+            var ok = false;
+
+            try {
+                timer.freeze(now);
+            } catch (e) {
+                ok = true;
+            }
+
+            expect(ok).toBe(true);
+        });
+
+        it('when Timer.play(), Timer.freeze(now - 1)       === {time:0,   value:0}', function () {
+            timer.play();
+            var position = timer.freeze(now);
+
+            expect(position).toEqual({time:0, value:0});
+        });
+
+        it('when Timer.play(), Timer.freeze(now)           === {time:0,   value:0}', function () {
+            timer.play();
+            var position = timer.freeze(now);
+
+            expect(position).toEqual({time:0, value:0});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur/2)   === {time:0.5, value:0.5}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur)     === {time:1,   value:1}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur);
+
+            expect(position).toEqual({time:1, value:1});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur + 1) === {time:1,   value:1}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur + 1);
+
+            expect(position).toEqual({time:1, value:1});
+        });
+
+        it('when Timer.freeze(now, now - 1)       === {time:0,   value:0}', function () {
+            var position = timer.freeze(now, now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.freeze(now, now)           === {time:0,   value:0}', function () {
+            var position = timer.freeze(now, now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.freeze(now, now + dur/2)   === {time:0.5, value:0.5}', function () {
+            var position = timer.freeze(now, now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.freeze(now, now + dur)     === {time:1,   value:1}', function () {
+            var position = timer.freeze(now, now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.freeze(now, now + dur + 1) === {time:1,   value:1}', function () {
+            var position = timer.freeze(now, now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
         });
     });
 });
