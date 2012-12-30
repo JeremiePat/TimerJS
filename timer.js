@@ -267,19 +267,19 @@
         // --------- //
 
         // Accessor to the delay set by the user
-        get userDelay() {
-            return this.data.userDelay;
+        get delay() {
+            return this.data.delay;
         },
 
-        set userDelay(value) {
+        set delay(value) {
             var newVal = toInt(value, 0),
-                oldVal = this.userDelay;
+                oldVal = this.delay;
 
             if (this.begin) {
                 this.begin = this.begin - oldVal + newVal;
             }
 
-            this.data.userDelay = newVal;
+            this.data.delay = newVal;
         },
 
         // Accessor to the start time set by the user
@@ -385,7 +385,7 @@
                 this.backTime = this.startTime;
             }
 
-            this.begin = this.startTime + this.userDelay;
+            this.begin = this.startTime + this.delay;
         },
 
         // Keep the last time the Timer is paused
@@ -475,10 +475,10 @@
         });
 
         // Truly initialize the object
-        this.set("duration", (isNumber(config) && config) || (config && config.duration));
-        this.set("userDelay", config && config.delay );
-        this.set("easing",    config && config.easing);
-        this.set("speed",     config && config.speed );
+        this.set("duration",(isNumber(config) && config) || (config && config.duration));
+        this.set("delay",    config && config.delay );
+        this.set("easing",   config && config.easing);
+        this.set("speed",    config && config.speed );
     }
 
     // ------------------------- //
@@ -499,10 +499,10 @@
     // Timer.delay
     Object.defineProperty(Timer.prototype, "delay", {
         set : function (value) {
-            this.set("userDelay", value);
+            this.set("delay", value);
         },
         get : function () {
-            return this.get("userDelay");
+            return this.get("delay");
         },
         enumerable   : true,
         configurable : false
@@ -630,7 +630,6 @@
 
     Timer.prototype.stop = function stop() {
         this.set("userTime", null);
-        this.set("delay",    0);
     };
 
     Timer.prototype.freeze = function freeze() {
