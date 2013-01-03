@@ -62,9 +62,7 @@
                 throw new Error('A zero time animation as no meaning!');
             }
 
-            var time = (now - begin) / (end - begin);
-
-            return this.easeFx(time, 0, 1, 1);
+            return this.easeFx(this.getTime(begin, end, now));
         },
 
         getTime  : function (begin, end, now) {
