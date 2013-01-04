@@ -312,6 +312,14 @@
             this.data.duration = toPosInt(value);
         },
 
+        get constrain() {
+            return this.data.constrain;
+        },
+
+        set constrain(value) {
+            this.data.constrain = !!value;
+        },
+
         // ------------------ //
         // Easing computation //
         // ------------------ //
@@ -473,10 +481,11 @@
         });
 
         // Truly initialize the object
-        this.set("duration",(isNumber(config) && config) || (config && config.duration));
-        this.set("delay",    config && config.delay );
-        this.set("easing",   config && config.easing);
-        this.set("speed",    config && config.speed );
+        this.set("duration", (isNumber(config) && config) || (config && config.duration));
+        this.set("delay",     config && config.delay    );
+        this.set("easing",    config && config.easing   );
+        this.set("speed",     config && config.speed    );
+        this.set("constrain",!config || config.constrain === undefined || config.constrain);
     }
 
     // ------------------------- //
@@ -542,6 +551,18 @@
         configurable : false
     });
 
+    // Timer.constrain
+    Object.defineProperty(Timer.prototype, "constrain", {
+        set : function (value) {
+            this.set('constrain', value);
+        },
+        get : function () {
+            return this.get("constrain");
+        },
+        enumerable   : true,
+        configurable : false
+    });
+
     // Timer.is.playing
     // Timer.is.paused
     Object.defineProperty(Timer.prototype, "is", {
@@ -556,9 +577,11 @@
                     paused : startTime !== null && speed === 0
                 };
 
-            if (speed > 0 && this.position.time >= 1) { this.stop(); }
-            if (speed < 0 && this.position.time <= 0) { this.stop(); }
-
+            if (this.constrain) {
+                if (speed > 0 && this.position.time >= 1) { this.stop(); }
+                if (speed < 0 && this.position.time <= 0) { this.stop(); }
+            }
+            
             return output;
         },
         enumerable   : true,
@@ -594,8 +617,10 @@
             begin = this.get("begin");
             end   = this.get("end");
 
-            if (now <= begin) { return output; }
-            if (now > end)   { this.stop(); return output; }
+            if (this.constrain) {
+                if (now <= begin) { return output; }
+                if (now > end)   { this.stop(); return output; }
+            }
 
             ease = this.get("easing");
 
@@ -641,8 +666,10 @@
             time  = this.get("easing").getTime(begin, end, now),
             value = this.get("easing").getValue(begin, end, now);
 
-        if (time < 0) { return {time: 0, value: 0}; }
-        if (time > 1) { return {time: 1, value: 1}; }
+        if (this.constrain) {
+            if (time < 0) { return {time: 0, value: 0}; }
+            if (time > 1) { return {time: 1, value: 1}; }
+        }
 
         return {time: time, value: value};
     };

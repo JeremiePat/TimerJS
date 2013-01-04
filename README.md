@@ -48,6 +48,7 @@ timer.duration; // Get/Set the duration while the timer will play
 timer.delay;    // Get/Set the delay before the timer start playing
 timer.speed;    // Get/Set the speed factor of the timer
 timer.easing    // Get/Set the easing function that will be used by the timer
+timer.constrain // Get/Set the time constrain to the range [0,1]
 
 // Properties (state of the timer)
 timer.position.value // Get the computed value over time based on easing
@@ -358,6 +359,28 @@ timer.easing = function (t) {
 };
 ```
 
+#### Timer.constrain
+
+The ``constrain``property allow to define if the timer must play only when a time value is within the range [0,1].
+
+If it's set to ``false``, the Timer will play (and return value) even if the time is out of the [0,1] range. By default, it is set to ``true``.
+
+```javascript
+var pos,
+    timer = new Timer({
+        duration: 5000,
+        delay: 1000
+    });
+
+timer.play();
+
+pos = timer.position; // { time:0, value:0 }
+
+timer.constrain = false;
+
+pos = timer.position; // { time:-0.2, value:-0.2 }
+
+```
 
 Roadmap
 -------
@@ -365,15 +388,16 @@ Roadmap
 This timer is far from finished the plan is to add the following features:
 
 * Enable loop
-* Autorized "out of range" time (currently constrain to the a 0-1 range)
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
 * Allow to synchronize several timers
 * Add support for Cubic-Bezier definition of easing function
+* Support step animation
 
 Done
 ----
 
+* Autorized "out of range" time (currently constrain to the a 0-1 range)
 * Add the ability to get a value against an arbitrary time, even if the timer is not playing.
 * Make easing function more readable and easier to maintain
 * Allow change of any parameters while the timer is playing

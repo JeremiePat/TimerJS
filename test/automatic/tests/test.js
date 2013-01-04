@@ -36,6 +36,18 @@ describe('API basic testing', function () {
 
             expect(timer.easing).toBe(foo);
         });
+
+        it('if new Timer({constrain:true}), timer.constrain === true', function () {
+            var timer = new Timer({constrain:true});
+
+            expect(timer.constrain).toBe(true);
+        });
+
+        it('if new Timer({constrain:false}), timer.constrain === false', function () {
+            var timer = new Timer({constrain:false});
+
+            expect(timer.constrain).toBe(false);
+        });
     });
 
     describe('Timer instance default state', function() {
@@ -89,6 +101,14 @@ describe('API basic testing', function () {
 
         it('Timer.easing exists', function () {
             expect(timer.easing).not.toBeUndefined();
+        });
+
+        it('Timer.constrain exists', function () {
+            expect(timer.constrain).not.toBeUndefined();
+        });
+
+        it('Timer.constrain default value is true,', function () {
+            expect(timer.constrain).toBe(true);
         });
 
         it('Timer.is exists', function () {
@@ -283,7 +303,7 @@ describe('API basic testing', function () {
         });
     });
 
-    describe('Testing Timer.freeze()', function () {
+    describe('Testing Timer.freeze() with Timer.constrain === true', function () {
         var timer,
             now = +new Date(),
             dur = 1000;
@@ -322,9 +342,9 @@ describe('API basic testing', function () {
             expect(ok).toBe(true);
         });
 
-        it('when Timer.play(), Timer.freeze(now - 1)       === {time:0,   value:0}', function () {
+        it('when Timer.play(), Timer.freeze(now - dur/2)   === {time:0,   value:0}', function () {
             timer.play();
-            var position = timer.freeze(now);
+            var position = timer.freeze(now - dur/2);
 
             expect(position).toEqual({time:0, value:0});
         });
@@ -350,23 +370,23 @@ describe('API basic testing', function () {
             expect(position).toEqual({time:1, value:1});
         });
 
-        it('when Timer.play(), Timer.freeze(now + dur + 1) === {time:1,   value:1}', function () {
+        it('when Timer.play(), Timer.freeze(now + dur*3/2) === {time:1,   value:1}', function () {
             timer.play();
-            var position = timer.freeze(now + dur + 1);
+            var position = timer.freeze(now + dur*3/2);
 
             expect(position).toEqual({time:1, value:1});
         });
 
-        it('when Timer.freeze(now, now - 1)       === {time:0,   value:0}', function () {
-            var position = timer.freeze(now, now + dur/2);
+        it('when Timer.freeze(now, now - dur/2)   === {time:0,   value:0}', function () {
+            var position = timer.freeze(now, now - dur/2);
 
-            expect(position).toEqual({time:0.5, value:0.5});
+            expect(position).toEqual({time:0, value:0});
         });
 
         it('when Timer.freeze(now, now)           === {time:0,   value:0}', function () {
-            var position = timer.freeze(now, now + dur/2);
+            var position = timer.freeze(now, now);
 
-            expect(position).toEqual({time:0.5, value:0.5});
+            expect(position).toEqual({time:0, value:0});
         });
 
         it('when Timer.freeze(now, now + dur/2)   === {time:0.5, value:0.5}', function () {
@@ -376,15 +396,99 @@ describe('API basic testing', function () {
         });
 
         it('when Timer.freeze(now, now + dur)     === {time:1,   value:1}', function () {
+            var position = timer.freeze(now, now + dur);
+
+            expect(position).toEqual({time:1, value:1});
+        });
+
+        it('when Timer.freeze(now, now + dur*3/2) === {time:1, value:1}', function () {
+            var position = timer.freeze(now, now + dur*3/2);
+
+            expect(position).toEqual({time:1, value:1});
+        });
+    });
+
+    describe('Testing Timer.freeze() with Timer.constrain === false', function () {
+        var timer,
+            now = +new Date(),
+            dur = 1000;
+
+        beforeEach(function () {
+            mDate.mock();
+            mDate.setTime(now);
+            timer = new Timer({
+                duration:dur,
+                constrain:false
+            });
+        });
+
+        afterEach(function () {
+            mDate.unmock();
+        });
+
+        it('when Timer.play(), Timer.freeze(now - dur/2)   === {time:-0.5, value:-0.5}', function () {
+            timer.play();
+            var position = timer.freeze(now - dur/2);
+
+            expect(position).toEqual({time:-0.5, value:-0.5});
+        });
+
+        it('when Timer.play(), Timer.freeze(now)           === {time:0,   value:0}', function () {
+            timer.play();
+            var position = timer.freeze(now);
+
+            expect(position).toEqual({time:0, value:0});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur/2)   === {time:0.5, value:0.5}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur/2);
+
+            expect(position).toEqual({time:0.5, value:0.5});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur)     === {time:1,   value:1}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur);
+
+            expect(position).toEqual({time:1, value:1});
+        });
+
+        it('when Timer.play(), Timer.freeze(now + dur*3/2) === {time:1.5, value:1.5}', function () {
+            timer.play();
+            var position = timer.freeze(now + dur*3/2);
+
+            expect(position).toEqual({time:1.5, value:1.5});
+        });
+
+        it('when Timer.freeze(now, now - dur/2)   === {time:-0.5, value:-0.5}', function () {
+            var position = timer.freeze(now, now - dur/2);
+
+            expect(position).toEqual({time:-0.5, value:-0.5});
+        });
+
+        it('when Timer.freeze(now, now)           === {time:0,   value:0}', function () {
+            var position = timer.freeze(now, now);
+
+            expect(position).toEqual({time:0, value:0});
+        });
+
+        it('when Timer.freeze(now, now + dur/2)   === {time:0.5, value:0.5}', function () {
             var position = timer.freeze(now, now + dur/2);
 
             expect(position).toEqual({time:0.5, value:0.5});
         });
 
-        it('when Timer.freeze(now, now + dur + 1) === {time:1,   value:1}', function () {
-            var position = timer.freeze(now, now + dur/2);
+        it('when Timer.freeze(now, now + dur)     === {time:1,   value:1}', function () {
+            var position = timer.freeze(now, now + dur);
 
-            expect(position).toEqual({time:0.5, value:0.5});
+            expect(position).toEqual({time:1, value:1});
+        });
+
+        it('when Timer.freeze(now, now + dur*3/2) === {time:1.5, value:1.5}', function () {
+            var position = timer.freeze(now, now + dur*3/2);
+
+            expect(position).toEqual({time:1.5, value:1.5});
         });
     });
 });
@@ -407,6 +511,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 params : [{speed:1, delay:600}]
             },
             {
+                title  : 'A forward animation with a 600ms delay and no time constrain',
+                results: [-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1],
+                params : [{speed:1, delay:600, constrain: false}]
+            },
+            {
                 title  : 'A forward animation with a 1s delay after 1s',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
                 params : [{speed:1},0,0,0,0,0,{delay:1000}]
@@ -420,6 +529,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 title  : 'A backward animation with a -600ms delay',
                 results: [0.3,0.2,0.1,0,0,0,0,0,0],
                 params : [{speed:-1, delay:-600}]
+            },
+            {
+                title  : 'A backward animation with a -600ms delay and no time constrain',
+                results: [0.3,0.2,0.1,0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6],
+                params : [{speed:-1, delay:-600, constrain:false}]
             },
             {
                 title  : 'A forward animation with a -2s delay',

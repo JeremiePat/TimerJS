@@ -29,6 +29,7 @@ function buildStepTest(dur, index, step, definition) {
 
       if(p[k] && p[k].easing) { timer.easing = p[k].easing; }
       if(p[k] && typeof p[k].delay === 'number') { timer.delay = p[k].delay; }
+      if(p[k] && typeof p[k].constrain === 'boolean') { timer.constrain = p[k].constrain; }
       if(p[k] && typeof p[k].duration === 'number') { timer.duration = p[k].duration; }
       if(p[k] && typeof p[k].speed === 'number') { timer.play(); timer.speed = p[k].speed; }
     }
