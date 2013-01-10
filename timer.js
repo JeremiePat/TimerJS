@@ -42,8 +42,8 @@
         return isNaN(+value) ? alt : +value;
     }
 
-    function toPosInt(value) {
-        return +value >= 0 ? +value : 0;
+    function toPosInt(value, alt) {
+        return +value >= 0 ? +value : alt;
     }
 
     function toNullTime(isNull) {
@@ -300,7 +300,7 @@
 
             // var now    = +new Date(),
             //     shift  = this.easing.getTime(this.begin, this.end, now),
-            //     newVal = toPosInt(value),
+            //     newVal = toPosInt(value, 0),
             //     oldVal = this.duration;
 
             // if (this.begin && this.end - oldVal + newVal > now) {
@@ -309,7 +309,7 @@
 
             // this.data.duration = newVal;
 
-            this.data.duration = toPosInt(value);
+            this.data.duration = toPosInt(value, 0);
         },
 
         get constrain() {
@@ -318,6 +318,14 @@
 
         set constrain(value) {
             this.data.constrain = !!value;
+        },
+
+        get loopLength() {
+            return this.data.loopLength;
+        },
+
+        set loopLength(value) {
+            this.data.loopLength = toPosInt(value, 1);
         },
 
         // ------------------ //
@@ -438,7 +446,7 @@
         },
         
         set begin(value) {
-            this.data.begin = toPosInt(value);
+            this.data.begin = toPosInt(value, 0);
         },
 
         // End time (readonly)
@@ -482,9 +490,10 @@
 
         // Truly initialize the object
         this.set("duration", (isNumber(config) && config) || (config && config.duration));
-        this.set("delay",     config && config.delay    );
-        this.set("easing",    config && config.easing   );
-        this.set("speed",     config && config.speed    );
+        this.set("delay",     config && config.delay  );
+        this.set("easing",    config && config.easing );
+        this.set("speed",     config && config.speed  );
+        this.set("loopLength",config && config.loops  );
         this.set("constrain",!config || config.constrain === undefined || config.constrain);
     }
 
@@ -554,10 +563,22 @@
     // Timer.constrain
     Object.defineProperty(Timer.prototype, "constrain", {
         set : function (value) {
-            this.set('constrain', value);
+            this.set("constrain", value);
         },
         get : function () {
             return this.get("constrain");
+        },
+        enumerable   : true,
+        configurable : false
+    });
+
+    // Timer.loops
+    Object.defineProperty(Timer.prototype, "loops", {
+        set : function (value) {
+            this.set("loopLength", value);
+        },
+        get : function () {
+            return this.get("loopLength");
         },
         enumerable   : true,
         configurable : false
@@ -590,21 +611,24 @@
 
     // Timer.position.time
     // Timer.position.value
+    // Timer.position.loop
     Object.defineProperty(Timer.prototype, "position", {
         set : function () {
             throw new Error("Timer.position is a readonly property");
         },
         get : function () {
-            var begin, end, now, ease, speed,
+            var begin, end, now, ease, speed, dur, pos,
                 startTime = this.get("startTime"),
                 output    = {
                     value : 0,
-                    time  : 0
+                    time  : 0,
+                    loop  : 1
                 };
 
             if (startTime === null) { return output; }
 
             speed = this.get("speed");
+            dur   = this.get("duration");
             now   = +new Date();
 
             if (speed === 0) {
@@ -617,17 +641,24 @@
             begin = this.get("begin");
             end   = this.get("end");
 
+            pos   = Math.ceil((now - begin) / dur);
+                
+            if (pos < 1) { pos = 1; }
+            if (this.loops > 0 && pos > this.loops) { pos = this.loops; }
+
+            begin += (pos-1)*dur;
+            end   += (pos-1)*dur;
+            output.loop = pos;
+
             if (this.constrain) {
                 if (now <= begin) { return output; }
-                if (now > end)   { this.stop(); return output; }
+                if (now > end) { this.stop(); return output; }
             }
 
             ease = this.get("easing");
 
-            output = {
-                value: ease.getValue(begin, end, now),
-                time : ease.getTime(begin, end, now)
-            };
+            output.value = ease.getValue(begin, end, now);
+            output.time  = ease.getTime( begin, end, now);
 
             return output;
         },

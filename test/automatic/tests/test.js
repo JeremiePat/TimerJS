@@ -48,6 +48,12 @@ describe('API basic testing', function () {
 
             expect(timer.constrain).toBe(false);
         });
+
+        it('if new Timer({loops:2}), timer.loops === 2', function () {
+            var timer = new Timer({loops:2});
+
+            expect(timer.loops).toBe(2);
+        });
     });
 
     describe('Timer instance default state', function() {
@@ -109,6 +115,14 @@ describe('API basic testing', function () {
 
         it('Timer.constrain default value is true,', function () {
             expect(timer.constrain).toBe(true);
+        });
+
+        it('Timer.loops exists', function () {
+            expect(timer.loops).not.toBeUndefined();
+        });
+
+        it('Timer.loops default value is 1,', function () {
+            expect(timer.loops).toBe(1);
         });
 
         it('Timer.is exists', function () {
@@ -193,6 +207,21 @@ describe('API basic testing', function () {
 
         it('Timer.position.time default value is 0,', function () {
             expect(timer.position.time).toBe(0);
+        });
+
+        it('Timer.position.loop exists', function () {
+            expect(timer.position.loop).not.toBeUndefined();
+        });
+
+        it('Timer.position.loop is read-only', function () {
+            var origine = timer.position.loop;
+            timer.position.loop = !origine;
+
+            expect(timer.position.loop).toBe(origine);
+        });
+
+        it('Timer.position.loop default value is 1,', function () {
+            expect(timer.position.loop).toBe(1);
         });
     });
 
@@ -579,6 +608,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 title  : 'A 2s forward animation that turn to a 1s animation after 1.4s',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0],
                 params : [{speed:1},0,0,0,0,0,0,{duration:1000}]
+            },
+            {
+                title  : 'A 2s forward animation that loop 2 times',
+                results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
+                params : [{speed:1,loops:2}]
             }
         ];
 

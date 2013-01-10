@@ -29,6 +29,7 @@
             easing   : document.getElementById("function"),
             duration : document.getElementById("duration"),
             delay    : document.getElementById("delay"),
+            loops    : document.getElementById("loops"),
             clear    : document.getElementById("clear")
         },
 
@@ -196,6 +197,12 @@
             t.delay = value;
         },
 
+        updateLoops : function (value) {
+            "use strict";
+
+            t.loops = value;
+        },
+
         forward : function () {
             "use strict";
 
@@ -276,6 +283,11 @@
             Action.updateDelay(evt.target.value);
             UI.canvas.draw(0,0);
         }
+
+        else if (evt.target === UI.param.loops) {
+            Action.updateLoops(evt.target.value);
+            UI.canvas.draw(0,0);
+        }
     
     }, false);
 
@@ -327,7 +339,8 @@
     t = new Timer({
         duration: UI.param.duration.value,
         delay   : UI.param.delay.value,
-        easing  : UI.param.easing.value
+        easing  : UI.param.easing.value,
+        loops   : UI.param.loops.value
     });
 
     UI.canvas.init(t.easing);
