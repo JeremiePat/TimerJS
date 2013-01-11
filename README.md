@@ -49,10 +49,12 @@ timer.delay;    // Get/Set the delay before the timer start playing
 timer.speed;    // Get/Set the speed factor of the timer
 timer.easing    // Get/Set the easing function that will be used by the timer
 timer.constrain // Get/Set the time constrain to the range [0,1]
+timer.loops     // Get/Set the number of loops the timer will proced
 
 // Properties (state of the timer)
 timer.position.value // Get the computed value over time based on easing
 timer.position.time  // Get the computed time in a 0-1 range
+timer.position.loop  // Get the number of the current timing loop
 timer.is.playing // Get the playing state of the timer
 timer.is.paused  // Get the paused state of the timer
 timer.startTime  // Get the timestamp when the timer started to play
@@ -105,6 +107,12 @@ var timer = new Timer({
   duration: 5000, 
   delay   : -5000,
   speed   : -1
+});
+
+// This will instantiate a timer that will play 5 times
+var timer = new Timer({
+  duration: 5000, 
+  loops   : 5
 });
 
 ```
@@ -170,7 +178,11 @@ All those properties are read-only
 
 #### Timer.position
 
-The ``position`` property is a readonly object with two properties: ``value``and ``time``. The two values give the current position of the time and value in the range 0-1 since the timer has started to play. A time value of 0 means that the time is at the begining of the time line. A time value of 1 means that the time is at the end of the time line. The progression of the ``time`` value is always linear where the progression of the ``value`` value depend on the easing function used by the timer (linear by default).
+The ``position`` property is a readonly object with three properties: ``value``, ``time`` and  ``loop``.
+
+The properties ``value`` and ``time`` give the current position of the time and value in the range 0-1 since the timer has started to play. A time value of 0 means that the time is at the begining of the time line. A time value of 1 means that the time is at the end of the time line. The progression of the ``time`` value is always linear where the progression of the ``value`` value depend on the easing function used by the timer (linear by default).
+
+The property ``loop`` indicate the number of the current loop. The number of loops always start at the value 1.
 
 ```javascript
 var timer = new Timer(5000);
@@ -180,6 +192,7 @@ timer.play();
 setTimeout(function () {
     console.log(timer.position.value); // 0.5
     console.log(timer.position.time);  // 0.5
+    console.log(timer.position.loop);  // 1
 }, 2500);
 ```
 
@@ -361,7 +374,7 @@ timer.easing = function (t) {
 
 #### Timer.constrain
 
-The ``constrain``property allow to define if the timer must play only when a time value is within the range [0,1].
+The ``constrain`` property allow to define if the timer must play only when a time value is within the range [0,1].
 
 If it's set to ``false``, the Timer will play (and return value) even if the time is out of the [0,1] range. By default, it is set to ``true``.
 
@@ -379,7 +392,33 @@ pos = timer.position; // { time:0, value:0 }
 timer.constrain = false;
 
 pos = timer.position; // { time:-0.2, value:-0.2 }
+```
 
+#### Timer.loops
+
+The ``loops`` property allow to define the number of times the timer will play the same animation. Note that the delay parameter affect the first loop only.
+
+If it's set to ``0``, the Timer will loop indefinitely. The default value is ``1`` (The timer will play one time).
+
+```javascript
+var timer = new Timer(5000);
+
+timer.loops = 5;
+
+function checkLoop() {
+    // 1/5 The first time the function is call
+    // 2/5 The second time the function is call
+    // 3/5 The third time the function is call
+    // 4/5 The fourth time the function is call
+    // 5/5 The fifth time the function is call
+    console.log(timer.position.loop + "/" + timer.loops);
+
+    if (timer.position.loop < timer.loops) {
+        setTimeout(checkLoop, 5000);
+    }
+};
+
+checkLoop();
 ```
 
 Roadmap
@@ -387,7 +426,6 @@ Roadmap
 
 This timer is far from finished the plan is to add the following features:
 
-* Enable loop
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
 * Allow to synchronize several timers
@@ -397,6 +435,7 @@ This timer is far from finished the plan is to add the following features:
 Done
 ----
 
+* Enable loop
 * Autorized "out of range" time (currently constrain to the a 0-1 range)
 * Add the ability to get a value against an arbitrary time, even if the timer is not playing.
 * Make easing function more readable and easier to maintain
