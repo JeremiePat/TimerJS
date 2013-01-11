@@ -613,6 +613,11 @@ describe('Testing variation in a 2s linear animation', function () {
                 title  : 'A 2s forward animation that loop 2 times',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
                 params : [{speed:1,loops:2}]
+            },
+            {
+                title  : 'A 2s forward animation that loop 2 times after a 1s delay',
+                results: [0,0,0,0,0,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
+                params : [{speed:1, delay: 1000,loops:2}]
             }
         ];
 
