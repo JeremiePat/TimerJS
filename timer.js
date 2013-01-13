@@ -30,6 +30,10 @@
         return Object.prototype.toString.call(value) === '[object Number]';
     }
 
+    function isArray(value) {
+        return Object.prototype.toString.call(value) === '[object Array]';
+    }
+
     function isFunction(value) {
         return typeof value === "function";
     }
@@ -53,6 +57,10 @@
     }
 
     function Easing(name) {
+        if (isArray(name) && name.length === 4) {
+            name = this.bezier.toFunc(name[0],name[1],name[2],name[3]);
+        }
+
         this.easeFx = (isFunction(name) && name) || this.func[name] || this.func.linear;
     }
     
@@ -71,6 +79,47 @@
             }
 
             return (now - begin) / (end - begin);
+        },
+
+        // Utils to bezier conversion
+        // assuming cubic bezier with control points (0, 0), (x1, y1), (x2, y2), and (1, 1).
+        bezier : {
+            n_for_t : function (t, n1, n2) {
+                var nt = 1-t;
+                return 3 * Math.pow(nt, 2) * t * n1 + 3 * nt * Math.pow(t, 2) * n2 + Math.pow(t, 3);
+            },
+
+            t_for_n : function (n, n1, n2) {
+                var gn, gt, i = 0,
+                    mint = 0,
+                    maxt = 1;
+
+                while (i < 30) {
+                    gt = (mint + maxt) / 2;
+                    gn = this.n_for_t(gt, n1, n2);
+
+                    if (n < gn) { maxt = gt; }
+                    else        { mint = gt; }
+
+                    i++;
+                }
+
+                return (mint + maxt) / 2;
+            },
+
+            toFunc : function (x1, y1, x2, y2) {
+                var b = this;
+                if (x1 > 1) { x1 = 1; }
+                if (x1 < 0) { x1 = 0; }
+                if (x2 > 1) { x2 = 1; }
+                if (x2 < 0) { x2 = 0; }
+
+                return function (t) {
+                    if (t === 0) { return 0; }
+                    if (t === 1) { return 1; }
+                    return b.n_for_t(b.t_for_n(t, x1, x2), y1, y2);
+                };
+            }
         },
 
         func : {

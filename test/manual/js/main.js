@@ -5,6 +5,7 @@
     // ---------------- //
 
     var t; // Timer
+    var bezier = /^(?:\d+(?:\.\d+)?,){3}\d+(?:\.\d+)?$/;
 
 
     // ---------------- //
@@ -37,7 +38,7 @@
             paper   : document.getElementById("drawing"),
             hidden  : document.createElement("canvas"),
             context : document.getElementById("drawing").getContext('2d'),
-            margin  : 40,
+            margin  : 20.5,
 
             init    : function (easing) {
                 "use strict";
@@ -65,39 +66,77 @@
             background : function (ctx) {
                 "use strict";
 
-                var m   = this.margin,
-                    w   = this.paper.width,
-                    h   = this.paper.height;
+                var a, x1, y1, x2, y2,
+                    m = this.margin,
+                    w = this.paper.width,
+                    h = this.paper.height;
 
+                ctx.font = "9px Verdana, sans-serif";
                 ctx.strokeStyle = "#000";
 
                 ctx.beginPath();
-                ctx.moveTo(15.5,20.5);
-                ctx.lineTo(20.5,20.5);
-                ctx.moveTo(20.5,10.5);
-                ctx.lineTo(20.5,h - m + 25.5);
-                ctx.moveTo(15.5,h - m + 20.5);
-                ctx.lineTo(w - m + 30.5,h - m + 20.5);
-                ctx.moveTo(w - m + 20.5,h - m + 20.5);
-                ctx.lineTo(w - m + 20.5,h - m + 25.5);
+                ctx.moveTo( m - 5      , m           );
+                ctx.lineTo( m          , m           );
+                ctx.moveTo( m          , m - 5       );
+                ctx.lineTo( m          , h - m + 5   );
+                ctx.moveTo( m - 5      , h - m       );
+                ctx.lineTo( w - m + 10 , h - m*2 + m );
+                ctx.moveTo( w - m      , h - m       );
+                ctx.lineTo( w - m      , h - m + 5   );
                 ctx.stroke();
 
                 ctx.strokeStyle = "#999";
                 ctx.mozDash = [2,4];
 
                 ctx.beginPath();
-                ctx.moveTo(20.5,20.5);
-                ctx.lineTo(w - m + 20.5,20.5);
-                ctx.lineTo(w - m + 20.5,h - m + 20.5);
+                ctx.moveTo( m     , m     );
+                ctx.lineTo( w - m , m     );
+                ctx.lineTo( w - m , h - m );
                 ctx.stroke();
 
                 ctx.mozDash = null;
 
-                ctx.font = "9px Verdana, sans-serif";
+                if (UI.param.easing.value.match(bezier)) {
+                    a = UI.param.easing.value.split(',');
+
+                    ctx.strokeStyle = "#090";
+
+                    x1 = (w - m*2)*a[0] + m;
+                    y1 = (h - m*2)*(1 - a[1]) + m;
+                    x2 = (w - m*2)*a[2] + m;
+                    y2 = (h - m*2)*(1 - a[3]) + m;
+
+                    ctx.beginPath();
+                    ctx.moveTo( m , h - m );
+                    ctx.lineTo( x1 , y1 );
+                    ctx.moveTo( w - m , m );
+                    ctx.lineTo( x2 , y2 );
+                    ctx.stroke();
+
+                    ctx.fillStyle = "#DEDEDE";
+
+                    ctx.beginPath();
+                    ctx.arc(x1,y1,5,0,360);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(x2,y2,5,0,360);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = "#000";
+
+                    ctx.fillText("x1 : " + a[0], x1 + 10, y1 - 15);
+                    ctx.fillText("y1 : " + a[1], x1 + 10, y1 - 5);
+                    ctx.fillText("x2 : " + a[2], x2 - 30, y2 + 15);
+                    ctx.fillText("y2 : " + a[3], x2 - 30, y2 + 25);
+                }
+
                 ctx.fillText("1", 8.5,23);
-                ctx.fillText("0", 8.5,h - m + 23.5);
-                ctx.fillText("0",17.5,h - m + 34);
-                ctx.fillText("1",w - m + 17.5,h - m + 34);
+                ctx.fillText("0", 8.5,h - m*2 + 23.5);
+                ctx.fillText("0",17.5,h - m*2 + 34);
+                ctx.fillText("1",w - m*2 + 17.5,h - m*2 + 34);
             },
 
             curve : function (ctx, easing) {
@@ -112,11 +151,11 @@
                 ctx.strokeStyle = "#F00";
 
                 ctx.beginPath();
-                ctx.moveTo(20.5,h - m + 20.5);
+                ctx.moveTo(m,h - m);
 
                 for (x = 0; x <= 1; x += l) {
                     y = easing(x, 0, 1, 1);
-                    ctx.lineTo((w - m)*x + 20.5, (h - m)*(1 - y) + 20.5);
+                    ctx.lineTo((w - m*2)*x + m, (h - m*2)*(1 - y) + m);
                 }
                 
                 ctx.stroke();
@@ -129,8 +168,8 @@
                 var m   = this.margin,
                     w   = this.paper.width,
                     h   = this.paper.height,
-                    x   = 20.5 + time * (w - m),
-                    y   = (h - m)*(1 - value) + 20.5; //(h - m + 20.5) - value * (h - m);
+                    x   = m + time * (w - m*2),
+                    y   = (h - m*2)*(1 - value) + m; //(h - m + 20.5) - value * (h - m);
 
                 this.context.fillStyle = "#000";
                 this.context.beginPath();
@@ -181,6 +220,10 @@
     var Action = {
         updateEasing : function (value) {
             "use strict";
+
+            if (value.match(bezier)) {
+                value = value.split(',');
+            }
 
             t.easing = value;
         },
@@ -339,7 +382,7 @@
     t = new Timer({
         duration: UI.param.duration.value,
         delay   : UI.param.delay.value,
-        easing  : UI.param.easing.value,
+        easing  : UI.param.easing.value.match(bezier) ? UI.param.easing.value.split(',') : UI.param.easing.value,
         loops   : UI.param.loops.value
     });
 

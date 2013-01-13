@@ -49,7 +49,7 @@ timer.delay;    // Get/Set the delay before the timer start playing
 timer.speed;    // Get/Set the speed factor of the timer
 timer.easing    // Get/Set the easing function that will be used by the timer
 timer.constrain // Get/Set the time constrain to the range [0,1]
-timer.loops     // Get/Set the number of loops the timer will proced
+timer.loops     // Get/Set the number of loops the timer will proceed
 
 // Properties (state of the timer)
 timer.position.value // Get the computed value over time based on easing
@@ -326,9 +326,10 @@ timer.speed = 2;  // The timer is playing twice its normal speed
 
 The ``easing`` property is the easing function used by the timer to compute the value of the ``position`` property. If the timer is playing, This property is a readonly property. Otherwise, you can change the easing function as you wish.
 
-To change the easing function you have two possibilities.
+To change the easing function you have three possibilities.
 
 * Creating a custom easing function. That function will accept an argument representing the time in a 0-1 range.
+* Using a cubic bezier definition. It work [the same as in CSS](http://www.w3.org/TR/css3-transitions/#transition-timing-function-property) but the four coordinates must be provide as an array of the form : [x1, y1, x2, y2]
 * Using one of the following keywords:
   * ``linear``
   * ``easeInQuad``
@@ -370,13 +371,17 @@ timer.easing = "easeInQuad";
 timer.easing = function (t) { 
     return t*t; 
 };
+
+timer.easing = [0.25,0.1,0.25,1];
 ```
 
 #### Timer.constrain
 
 The ``constrain`` property allow to define if the timer must play only when a time value is within the range [0,1].
 
-If it's set to ``false``, the Timer will play (and return value) even if the time is out of the [0,1] range. By default, it is set to ``true``.
+If it's set to ``false``, the Timer will play (and return value) even if the time is out of the [0,1] range. By default, it is set to ``true``. 
+
+Note that if you set the ``constrain`` property to ``false`` and if you defined an easing function with a cubic bezier curve, the behavior is undefined out of the range [0,1]. 
 
 ```javascript
 var pos,
@@ -429,12 +434,12 @@ This timer is far from finished the plan is to add the following features:
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
 * Allow to synchronize several timers
-* Add support for Cubic-Bezier definition of easing function
 * Support step animation
 
 Done
 ----
 
+* Add support for Cubic-Bezier definition of easing function
 * Enable loop
 * Autorized "out of range" time (currently constrain to the a 0-1 range)
 * Add the ability to get a value against an arbitrary time, even if the timer is not playing.
