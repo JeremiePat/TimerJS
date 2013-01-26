@@ -25,25 +25,22 @@
     // ------------------ //
     // UTILITIES          //
     // ------------------ //
-    
-    function isNumber(value) {
-        return Object.prototype.toString.call(value) === '[object Number]';
+
+    // Extend JS objects to make them testable in an easy way
+    Function.prototype.isFunction = true;
+
+    Number.prototype.isNumber = true;
+
+    if (!Number.isNaN) {
+        Number.isNaN = function (n) {
+            return typeof n === "number" && window.isNaN(n);
+        };
     }
 
-    function isArray(value) {
-        return Object.prototype.toString.call(value) === '[object Array]';
-    }
-
-    function isFunction(value) {
-        return typeof value === "function";
-    }
-
-    function isNaN(value) {
-        return isNumber(value) && window.isNaN(value);
-    }
+    // Internal casting function
 
     function toInt(value, alt) {
-        return isNaN(+value) ? alt : +value;
+        return Number.isNaN(+value) ? alt : +value;
     }
 
     function toPosInt(value, alt) {
@@ -52,16 +49,18 @@
 
     function toNullTime(isNull) {
         if (isNull === null)  { return null; }
-        if (isNumber(isNull) && isNull > 0) { return isNull; }
+        if (isNull && isNull.isNumber && isNull > 0) { return isNull; }
         return +new Date();
     }
 
+    // Easing manager
+
     function Easing(name) {
-        if (isArray(name) && name.length === 4) {
+        if (Array.isArray(name) && name.length === 4) {
             name = this.bezier.toFunc(name[0],name[1],name[2],name[3]);
         }
 
-        this.easeFx = (isFunction(name) && name) || this.func[name] || this.func.linear;
+        this.easeFx = (name && name.isFunction && name) || this.func[name] || this.func.linear;
     }
     
     Easing.prototype = {
