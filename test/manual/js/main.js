@@ -31,6 +31,8 @@
             duration : document.getElementById("duration"),
             delay    : document.getElementById("delay"),
             loops    : document.getElementById("loops"),
+            steps    : document.getElementById("steps"),
+            stepPos  : document.getElementById("stepPos"),
             clear    : document.getElementById("clear")
         },
 
@@ -40,7 +42,7 @@
             context : document.getElementById("drawing").getContext('2d'),
             margin  : 20.5,
 
-            init    : function (easing) {
+            init    : function () {
                 "use strict";
 
                 var w = this.paper.width,
@@ -51,7 +53,7 @@
                 this.hidden.height = h;
 
                 this.background(ctx);
-                this.curve(ctx, easing);
+                this.curve(ctx);
             },
 
             draw     : function (time, value) {
@@ -139,14 +141,16 @@
                 ctx.fillText("1",w - m*2 + 17.5,h - m*2 + 34);
             },
 
-            curve : function (ctx, easing) {
+            curve : function (ctx) {
                 "use strict";
 
                 var x, y,
                     m = this.margin,
                     w = this.paper.width,
                     h = this.paper.height,
-                    l = 1/(w - m);
+                    l = 1/(w - m),
+                    s = 0,
+                    p = 0;
 
                 ctx.strokeStyle = "#F00";
 
@@ -154,8 +158,16 @@
                 ctx.moveTo(m,h - m);
 
                 for (x = 0; x <= 1; x += l) {
-                    y = easing(x, 0, 1, 1);
-                    ctx.lineTo((w - m*2)*x + m, (h - m*2)*(1 - y) + m);
+                    if (t.steps.length > 0) {
+                        s = t.steps.position === "end" ? "floor" : "ceil";
+                        s = Math[s](x * t.steps.length);
+                        y = t.easing(s / t.steps.length);
+                    } else {
+                        y = t.easing(x);
+                    }
+
+                    ctx[p !== s ? "moveTo" : "lineTo"]((w - m*2)*x + m, (h - m*2)*(1 - y) + m);
+                    p = s;
                 }
                 
                 ctx.stroke();
@@ -246,6 +258,13 @@
             t.loops = value;
         },
 
+        updateSteps : function (value, position) {
+            "use strict";
+
+            t.steps.length   = value;
+            t.steps.position = position;
+        },
+
         forward : function () {
             "use strict";
 
@@ -313,7 +332,7 @@
 
         if (evt.target === UI.param.easing) {
             Action.updateEasing(evt.target.value);
-            UI.canvas.init(t.easing);
+            UI.canvas.init();
             UI.canvas.draw(0,0);
         }
 
@@ -329,6 +348,13 @@
 
         else if (evt.target === UI.param.loops) {
             Action.updateLoops(evt.target.value);
+            UI.canvas.draw(0,0);
+        }
+
+        else if (evt.target === UI.param.steps ||
+                 evt.target === UI.param.stepPos) {
+            Action.updateSteps(UI.param.steps.value, UI.param.stepPos.value);
+            UI.canvas.init();
             UI.canvas.draw(0,0);
         }
     
@@ -383,10 +409,14 @@
         duration: UI.param.duration.value,
         delay   : UI.param.delay.value,
         easing  : UI.param.easing.value.match(bezier) ? UI.param.easing.value.split(',') : UI.param.easing.value,
-        loops   : UI.param.loops.value
+        loops   : UI.param.loops.value,
+        steps   : {
+            length   : UI.param.steps.value,
+            position : UI.param.stepPos.value
+        }
     });
 
-    UI.canvas.init(t.easing);
+    UI.canvas.init();
     UI.canvas.draw(0,0);
 
     console.log("Timer");

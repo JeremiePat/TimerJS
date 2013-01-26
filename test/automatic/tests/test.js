@@ -54,6 +54,25 @@ describe('API basic testing', function () {
 
             expect(timer.loops).toBe(2);
         });
+
+        it('if new Timer({steps:2}), timer.steps == {length:2, position:"end"}', function () {
+            var timer = new Timer({steps:2});
+
+            expect(timer.steps.length  ).toBe(2);
+            expect(timer.steps.position).toBe("end");
+        });
+
+        it('if new Timer({steps:{length:2,position:"start"}}), timer.steps == {length:2, position:"start"}', function () {
+            var timer = new Timer({
+                    steps:{
+                        length  : 2,
+                        position: "start"
+                    }
+                });
+
+            expect(timer.steps.length  ).toBe(2);
+            expect(timer.steps.position).toBe("start");
+        });
     });
 
     describe('Timer instance default state', function() {
@@ -123,6 +142,18 @@ describe('API basic testing', function () {
 
         it('Timer.loops default value is 1,', function () {
             expect(timer.loops).toBe(1);
+        });
+
+        it('Timer.steps exists', function () {
+            expect(timer.steps).not.toBeUndefined();
+        });
+
+        it('Timer.steps.length default value is 0,', function () {
+            expect(timer.steps.length).toBe(0);
+        });
+
+        it('Timer.steps.position default value is "end",', function () {
+            expect(timer.steps.position).toBe("end");
         });
 
         it('Timer.is exists', function () {
@@ -520,6 +551,122 @@ describe('API basic testing', function () {
             expect(position).toEqual({time:1.5, value:1.5});
         });
     });
+
+    describe('Testing Timer.freeze() with steps on a 1s animation', function () {
+        var timer,
+            now = +new Date(),
+            dur = 1000;
+
+        describe('when Timer.steps === {length:2, position:"start"}', function () {
+            beforeEach(function () {
+                timer = new Timer({
+                    duration: dur,
+                    steps   : {
+                        length  : 2,
+                        position: "start"
+                    }
+                });
+            });
+
+
+            it('Timer.freeze(now, now       ).value === 0', function () {
+                var value = timer.freeze(now, now).value;
+
+                expect(value).toBe(0);
+            });
+
+            it('Timer.freeze(now, now + 1   ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 1).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 499 ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 499).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 500 ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 500).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 501 ).value === 1', function () {
+                var value = timer.freeze(now, now + 501).value;
+
+                expect(value).toBe(1);
+            });
+
+            it('Timer.freeze(now, now + 999 ).value === 1', function () {
+                var value = timer.freeze(now, now + 999).value;
+
+                expect(value).toBe(1);
+            });
+
+            it('Timer.freeze(now, now + 1000).value === 1', function () {
+                var value = timer.freeze(now, now + 1000).value;
+
+                expect(value).toBe(1);
+            });
+        });
+
+        describe('when Timer.steps === {length:2, position:"end"}', function () {
+            beforeEach(function () {
+                timer = new Timer({
+                    duration: dur,
+                    steps   : {
+                        length  : 2,
+                        position: "end"
+                    }
+                });
+            });
+
+
+            it('Timer.freeze(now, now       ).value === 0', function () {
+                var value = timer.freeze(now, now).value;
+
+                expect(value).toBe(0);
+            });
+
+            it('Timer.freeze(now, now + 1   ).value === 0', function () {
+                var value = timer.freeze(now, now + 1).value;
+
+                expect(value).toBe(0);
+            });
+
+            it('Timer.freeze(now, now + 499 ).value === 0', function () {
+                var value = timer.freeze(now, now + 499).value;
+
+                expect(value).toBe(0);
+            });
+
+            it('Timer.freeze(now, now + 500 ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 500).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 501 ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 501).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 999 ).value === 0.5', function () {
+                var value = timer.freeze(now, now + 999).value;
+
+                expect(value).toBe(0.5);
+            });
+
+            it('Timer.freeze(now, now + 1000).value === 1', function () {
+                var value = timer.freeze(now, now + 1000).value;
+
+                expect(value).toBe(1);
+            });
+        });
+    });
 });
 
 describe('Testing variation in a 2s linear animation', function () {
@@ -612,12 +759,24 @@ describe('Testing variation in a 2s linear animation', function () {
             {
                 title  : 'A 2s forward animation that loop 2 times',
                 results: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
-                params : [{speed:1,loops:2}]
+                params : [{speed:1, loops:2}]
             },
             {
                 title  : 'A 2s forward animation that loop 2 times after a 1s delay',
                 results: [0,0,0,0,0,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
-                params : [{speed:1, delay: 1000,loops:2}]
+                params : [{speed:1, delay: 1000, loops:2}]
+            },
+            {
+                title  : 'A 2s forward animation with 5 steps positioned to "end"',
+                time   : [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
+                results: [0,0  ,0.2,0.2,0.4,0.4,0.6,0.6,0.8,0.8,1,0],
+                params : [{speed:1, steps:5}]
+            },
+            {
+                title  : 'A 2s forward animation with 5 steps positioned to "start"',
+                time   : [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,0],
+                results: [0,0.2,0.2,0.4,0.4,0.6,0.6,0.8,0.8,1  ,1,0],
+                params : [{speed:1, steps:{length:5,position:"start"}}]
             }
         ];
 

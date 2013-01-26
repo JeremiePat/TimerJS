@@ -299,11 +299,17 @@
         }
     };
 
+    // Timer internal state manager
+
     function TimerState() {
         this.data = {
             userTime  : null,
             startTime : null,
-            easing    : new Easing()
+            easing    : new Easing(),
+            steps     : {
+                length   : 0,
+                position : "end"
+            }
         };
     }
 
@@ -374,6 +380,22 @@
 
         set loopLength(value) {
             this.data.loopLength = toPosInt(value, 1);
+        },
+
+        get steps() {
+            return this.data.steps;
+        },
+
+        set steps(value) {
+            if (value && (value.length || value.isNumber)) {
+                this.data.steps.length = toPosInt(value.length || value, 0);
+            }
+
+            if (value && value.position) {
+                this.data.steps.position = value.position === "start" ||
+                                           value.position === "end" ?
+                                           value.position : "end";
+            }
         },
 
         // ------------------ //
@@ -537,12 +559,13 @@
         });
 
         // Truly initialize the object
-        this.set("duration", (isNumber(config) && config) || (config && config.duration));
-        this.set("delay",     config && config.delay  );
-        this.set("easing",    config && config.easing );
-        this.set("speed",     config && config.speed  );
-        this.set("loopLength",config && config.loops  );
-        this.set("constrain",!config || config.constrain === undefined || config.constrain);
+        this.set("duration",   (config && config.isNumber && config) || (config && config.duration));
+        this.set("delay",       config && config.delay  );
+        this.set("easing",      config && config.easing );
+        this.set("speed",       config && config.speed  );
+        this.set("loopLength",  config && config.loops  );
+        this.set("steps",       config && config.steps  );
+        this.set("constrain",  !config || config.constrain === undefined || config.constrain);
     }
 
     // ------------------------- //
@@ -632,6 +655,37 @@
         configurable : false
     });
 
+    // Timer.steps.length
+    // Timer.steps.position
+    Object.defineProperty(Timer.prototype, "steps", {
+        set : function (value) {
+            this.set("steps", value);
+        },
+        get : function () {
+            var timer = this;
+
+            return {
+                set length(value) {
+                    timer.set("steps", {length:value});
+                },
+
+                get length() {
+                    return timer.get("steps").length;
+                },
+
+                set position(value) {
+                    timer.set("steps", {position:value});
+                },
+
+                get position() {
+                    return timer.get("steps").position;
+                }
+            };
+        },
+        enumerable   : true,
+        configurable : false,
+    });
+
     // Timer.is.playing
     // Timer.is.paused
     Object.defineProperty(Timer.prototype, "is", {
@@ -665,7 +719,7 @@
             throw new Error("Timer.position is a readonly property");
         },
         get : function () {
-            var begin, end, now, ease, speed, dur, pos,
+            var begin, end, now, ease, speed, dur, pos, step,
                 startTime = this.get("startTime"),
                 output    = {
                     value : 0,
@@ -705,8 +759,15 @@
 
             ease = this.get("easing");
 
-            output.value = ease.getValue(begin, end, now);
             output.time  = ease.getTime( begin, end, now);
+
+            if (this.steps.length > 0) {
+                step = this.steps.position === "end" ? "floor" : "ceil";
+                step = Math[step](output.time * this.steps.length);
+                output.value = ease.easeFx(step/this.steps.length);
+            } else {
+                output.value = ease.getValue(begin, end, now);
+            }
 
             return output;
         },
@@ -742,8 +803,14 @@
         var begin = (arguments.length > 1 ? arguments[0] : this.startTime) + this.delay,
             now   = arguments[1] || arguments[0] || +new Date(),
             end   = begin + this.duration,
+            step  = this.steps.position === "end" ? "floor" : "ceil",
             time  = this.get("easing").getTime(begin, end, now),
             value = this.get("easing").getValue(begin, end, now);
+
+        if (this.steps.length > 0) {
+            step  = Math[step](time * this.steps.length);
+            value = this.get("easing").easeFx(step/this.steps.length);
+        }
 
         if (this.constrain) {
             if (time < 0) { return {time: 0, value: 0}; }

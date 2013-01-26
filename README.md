@@ -43,14 +43,6 @@ timer.pause(); // Pause the timer (short cut to ``timer.speed = 0;``)
 timer.stop();  // Stop the timer
 timer.freeze();// Return a position against an arbitrary time
 
-// Properties (configuration)
-timer.duration; // Get/Set the duration while the timer will play
-timer.delay;    // Get/Set the delay before the timer start playing
-timer.speed;    // Get/Set the speed factor of the timer
-timer.easing    // Get/Set the easing function that will be used by the timer
-timer.constrain // Get/Set the time constrain to the range [0,1]
-timer.loops     // Get/Set the number of loops the timer will proceed
-
 // Properties (state of the timer)
 timer.position.value // Get the computed value over time based on easing
 timer.position.time  // Get the computed time in a 0-1 range
@@ -58,6 +50,16 @@ timer.position.loop  // Get the number of the current timing loop
 timer.is.playing // Get the playing state of the timer
 timer.is.paused  // Get the paused state of the timer
 timer.startTime  // Get the timestamp when the timer started to play
+
+// Properties (configuration)
+timer.duration; // Get/Set the duration while the timer will play
+timer.delay;    // Get/Set the delay before the timer start playing
+timer.speed;    // Get/Set the speed factor of the timer
+timer.easing    // Get/Set the easing function that will be used by the timer
+timer.constrain // Get/Set the time constrain to the range [0,1]
+timer.loops     // Get/Set the number of loops the timer will proceed
+timer.steps.length   // Get/Set the number of steps in a discrete animation
+timer.steps.position // Get/Set when the value change between steps
 ```
 
 
@@ -172,7 +174,7 @@ position.value; // 0.9
 ```
 
 
-### Properties (configuration)
+### Properties (state of the timer)
 
 All those properties are read-only
 
@@ -247,7 +249,7 @@ startTime = timer.startTime // null
 ```
 
 
-### Properties (state of the timer)
+### Properties (configuration)
 
 #### Timer.duration
 
@@ -366,12 +368,15 @@ To change the easing function you have three possibilities.
 ```javascript
 var timer = new Timer(5000);
 
+// This will use a predefine easing function
 timer.easing = "easeInQuad";
 
+// This will use a custom easing function
 timer.easing = function (t) { 
     return t*t; 
 };
 
+// This will use a cubic-bezier easing function
 timer.easing = [0.25,0.1,0.25,1];
 ```
 
@@ -426,6 +431,45 @@ function checkLoop() {
 checkLoop();
 ```
 
+#### Timer.steps
+
+The ``steps`` property allow to turn a regular animation into a discrete animation with an arbitrary number of steps. This property is an object with two subproperties: 
+
+* ``length`` which is used to get and set the number of steps. It's default value is ``0``
+* ``position``which is used to get and set the moment when the value change. It accept two possible values: 
+  * ``start``: The value will change immediately after the step begins
+  * ``end``: The value will change when the step ends
+
+```javascript
+var now = +new Date,
+    timer = new Timer({
+        duration: 1000,
+        steps: {
+            length: 2,
+            position: "start",
+        }
+    });
+
+timer.freeze(now,now       ).value; // 0
+timer.freeze(now,now + 1   ).value; // 0.5
+timer.freeze(now,now + 499 ).value; // 0.5
+timer.freeze(now,now + 500 ).value; // 0.5
+timer.freeze(now,now + 501 ).value; // 1
+timer.freeze(now,now + 999 ).value; // 1
+timer.freeze(now,now + 1000).value; // 1
+
+timer.steps.position = "end";
+
+timer.freeze(now,now       ).value; // 0
+timer.freeze(now,now + 1   ).value; // 0
+timer.freeze(now,now + 499 ).value; // 0
+timer.freeze(now,now + 500 ).value; // 0.5
+timer.freeze(now,now + 501 ).value; // 0.5
+timer.freeze(now,now + 999 ).value; // 0.5
+timer.freeze(now,now + 1000).value; // 1
+```
+
+
 Roadmap
 -------
 
@@ -434,11 +478,11 @@ This timer is far from finished the plan is to add the following features:
 * Improve reversed animation
 * Add the ability to remember the last state of an animation when stopped.
 * Allow to synchronize several timers
-* Support step animation
 
 Done
 ----
 
+* Support for stepped animations
 * Add support for Cubic-Bezier definition of easing function
 * Enable loop
 * Autorized "out of range" time (currently constrain to the a 0-1 range)

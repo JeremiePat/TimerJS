@@ -93,11 +93,17 @@ header {
     cursor     : pointer;
 }
 
-.control label {
+.control label,
+.control span {
     display : inline-block;
     padding : 0 10px 5px;
 
     vertical-align : bottom;
+}
+
+.control span > label {
+    padding: 0;
+    vertical-align: auto;
 }
 
 .control input {
