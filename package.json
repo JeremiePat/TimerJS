@@ -1,0 +1,35 @@
+{
+  "name": "timer-js",
+  "version": "1.0.0",
+  "description": "A simple library to manage time based animations",
+  "author": "Jeremie Patonnier <jeremie.patonnier@gmail.com>",
+  "license": "BSD-3-Clause",
+  "main": "timer.umd.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeremiePat/TimerJS.git"
+  },
+  "keywords": [
+    "timer",
+    "animation"
+  ],
+  "bugs": {
+    "url": "https://github.com/JeremiePat/TimerJS/issues"
+  },
+  "homepage": "https://github.com/JeremiePat/TimerJS#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.2",
+    "mocha": "^3.5.3",
+    "webpack": "^3.6.0"
+  }
+}
