@@ -48,7 +48,7 @@
                 var w = this.paper.width,
                     h = this.paper.height,
                     ctx = this.hidden.getContext('2d');
-                
+
                 this.hidden.width  = w;
                 this.hidden.height = h;
 
@@ -169,7 +169,7 @@
                     ctx[p !== s ? "moveTo" : "lineTo"]((w - m*2)*x + m, (h - m*2)*(1 - y) + m);
                     p = s;
                 }
-                
+
                 ctx.stroke();
             },
 
@@ -216,7 +216,7 @@
 
         // Update canvas rendering
         UI.canvas.draw(t.position.time, t.position.value);
-        
+
         if(t.is.playing) {
             requestAnimationFrame(theLoop);
         } else {
@@ -269,7 +269,7 @@
             "use strict";
 
             t.speed = 10;
-            
+
             if(!t.is.playing) {
                 t.play();
                 theLoop();
@@ -280,7 +280,7 @@
             "use strict";
 
             t.speed = -10;
-            
+
             if(!t.is.playing) {
                 t.play();
                 theLoop();
@@ -297,10 +297,10 @@
             "use strict";
 
             var isPlaying = t.is.playing;
-            
+
             t.speed = 1;
             t.play();
-            
+
             if(!isPlaying) { theLoop(); }
         },
 
@@ -308,7 +308,7 @@
             "use strict";
 
             t.speed = -1;
-            
+
             if(!t.is.playing) {
                 t.play();
                 theLoop();
@@ -357,7 +357,7 @@
             UI.canvas.init();
             UI.canvas.draw(0,0);
         }
-    
+
     }, false);
 
     document.addEventListener("click", function (evt) {
